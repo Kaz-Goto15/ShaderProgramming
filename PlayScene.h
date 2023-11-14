@@ -1,8 +1,9 @@
 #pragma once
 #include "Engine/GameObject.h"
-
 class PlayScene : public GameObject
 {
+
+	//Quad* q;
 public:
 	//コンストラクタ
 	//引数：parent  親オブジェクト（SceneManager）

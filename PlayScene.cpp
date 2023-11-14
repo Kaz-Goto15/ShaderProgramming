@@ -15,7 +15,7 @@ void PlayScene::Initialize()
 	//pPlayer = new Player(this);
 	//pPlayer->Initialize();
 	//childList_.push_back(pPlayer);
-	GameObject* pPlayer = Instantiate<Player>(this);
+	//Quad* q = Instantiate<Quad>(this);
 	//Instantiate<Enemy>(this);
 }
 
@@ -28,11 +28,9 @@ void PlayScene::Update()
 //•`‰æ
 void PlayScene::Draw()
 {
-
 }
 
 //ŠJ•ú
 void PlayScene::Release()
 {
-
 }
