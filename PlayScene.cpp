@@ -1,6 +1,6 @@
 #include "PlayScene.h"
-#include "Player.h"
-#include "Enemy.h"
+#include "Ground.h"
+#include "Ball.h"
 //コンストラクタ
 PlayScene::PlayScene(GameObject* parent)
 	: GameObject(parent, "PlayScene")
@@ -11,6 +11,12 @@ PlayScene::PlayScene(GameObject* parent)
 //初期化
 void PlayScene::Initialize()
 {
+	//Instantiate<Ground>(this);
+	//Instantiate<Ball>(this);
+	//Instantiate<Arrow>(this);
+	arrowX = new Arrow(this);
+	arrowY = new Arrow(this);
+	arrowZ = new Arrow(this);
 	//Player* pPlayer;
 	//pPlayer = new Player(this);
 	//pPlayer->Initialize();
@@ -33,4 +39,5 @@ void PlayScene::Draw()
 //開放
 void PlayScene::Release()
 {
+
 }

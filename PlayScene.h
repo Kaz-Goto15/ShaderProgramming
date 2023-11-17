@@ -1,8 +1,11 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include "Arrow.h"
 class PlayScene : public GameObject
 {
-
+	Arrow* arrowX = nullptr;
+	Arrow* arrowY;
+	Arrow* arrowZ;
 	//Quad* q;
 public:
 	//コンストラクタ

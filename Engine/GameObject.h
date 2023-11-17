@@ -15,7 +15,7 @@ private:
 protected:
 	std::list<GameObject*>	childList_;
 	Transform				transform_;
-	GameObject*				pParent_;
+	GameObject* pParent_;
 	std::string				objectName_;
 	SphereCollider* pCollider_;
 
@@ -28,7 +28,7 @@ public:
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 	virtual void Release() = 0;
-	
+
 	void UpdateSub();
 	void DrawSub();
 	void ReleaseSub();
@@ -42,7 +42,7 @@ public:
 
 	GameObject* GetRootJob();
 	GameObject* FindChildObject(std::string _objName);
-	GameObject* FindObject(std::string _objName){ return GetRootJob()->FindChildObject(_objName); }
+	GameObject* FindObject(std::string _objName) { return GetRootJob()->FindChildObject(_objName); }
 	template <class T>
 	GameObject* Instantiate(GameObject* parent)
 	{
@@ -58,7 +58,7 @@ public:
 	virtual void OnCollision(GameObject* pTarget) {};
 	void RoundRobin(GameObject* pTarget);
 
-	std::string GetObjectName() { 
-		return objectName_; 
+	std::string GetObjectName() {
+		return objectName_;
 	}
 };

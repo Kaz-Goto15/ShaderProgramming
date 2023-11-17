@@ -6,7 +6,7 @@
 #include "Engine/Input.h"
 #include "Engine/RootJob.h"
 #include "Engine/Model.h"
-#include "Engine/Quad.h"
+//#include "Engine/Quad.h"
 
 #pragma comment(lib, "winmm.lib")
 
@@ -20,7 +20,7 @@ RootJob* pRootJob = nullptr;
 //プロトタイプ宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-Quad* pQuad;
+//Quad* pQuad;
 
 //エントリーポイント
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
@@ -75,7 +75,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, 
 	//DirectInputの初期化
 	Input::Initialize(hWnd);
 
-	pQuad = new Quad();
+	//pQuad = new Quad();
 	pRootJob = new RootJob(nullptr);
 	pRootJob->Initialize();
 	//メッセージループ（何か起きるのを待つ）
@@ -126,7 +126,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, 
 			//入力処理
 			Input::Update();
 			Transform trans;
-			pQuad->Draw(trans);
+			//pQuad->Draw(trans);
 			pRootJob->UpdateSub();
 
 			//描画
@@ -140,7 +140,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, 
 
 	Model::Release();
 	pRootJob->ReleaseSub();
-	SAFE_DELETE(pQuad);
+	//SAFE_DELETE(pQuad);
 	SAFE_DELETE(pRootJob);
 	Input::Release();
 	Direct3D::Release();

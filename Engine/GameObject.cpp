@@ -7,7 +7,7 @@ GameObject::GameObject()
 	isDead = false;
 }
 
-GameObject::GameObject(GameObject* parent, const std::string& name):
+GameObject::GameObject(GameObject* parent, const std::string& name) :
 	pParent_(parent),
 	objectName_(name),
 	isDead(false),
@@ -100,15 +100,15 @@ void GameObject::Collision(GameObject* pTarget)
 	//自分のコライダーとターゲットの衝突時にonCollision(pTarget)を呼出
 	//not attached
 	if (pTarget == this || pTarget->pCollider_ == nullptr)return;
-	
-	float dist = 
+
+	float dist =
 		pow(pTarget->transform_.position_.x - transform_.position_.x, 2) +
 		pow(pTarget->transform_.position_.y - transform_.position_.y, 2) +
 		pow(pTarget->transform_.position_.z - transform_.position_.z, 2);
-	float rDist = 
+	float rDist =
 		pow((pTarget->pCollider_->GetRadius() + pCollider_->GetRadius()), 2);
 	//自分とターゲットの距離 <= R1+R2ならonColli
-	if (dist<= rDist) {
+	if (dist <= rDist) {
 		this->OnCollision(pTarget);
 	}
 }
