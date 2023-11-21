@@ -12,11 +12,11 @@ PlayScene::PlayScene(GameObject* parent)
 void PlayScene::Initialize()
 {
 	//Instantiate<Ground>(this);
-	//Instantiate<Ball>(this);
+	Instantiate<Ball>(this);
 	//Instantiate<Arrow>(this);
-	arrowX = new Arrow(this);
-	arrowY = new Arrow(this);
-	arrowZ = new Arrow(this);
+	//arrowX = Instantiate<Arrow>(this);
+	//arrowY = new Arrow(this);
+	//arrowZ = new Arrow(this);
 	//Player* pPlayer;
 	//pPlayer = new Player(this);
 	//pPlayer->Initialize();
