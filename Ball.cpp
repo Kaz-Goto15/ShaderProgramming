@@ -16,13 +16,16 @@ Ball::~Ball()
 void Ball::Initialize()
 {
     //モデルデータのロード
-    hModel_ = Model::Load("Assets/ball10.fbx");
+    hModel_ = Model::Load("Assets/ball.fbx");
     assert(hModel_ >= 0);
+    transform_.rotate_.z = 180;
+    SetPosition({ 1,1,1 });
 }
 
 //更新
 void Ball::Update()
 {
+    transform_.rotate_.y++;
 }
 
 //描画

@@ -3,9 +3,9 @@
 #include "Arrow.h"
 class PlayScene : public GameObject
 {
-	Arrow* arrowX = nullptr;
-	Arrow* arrowY;
-	Arrow* arrowZ;
+	Arrow* pArrowX;
+	Arrow* pArrowY;
+	Arrow* pArrowZ;
 	//Quad* q;
 public:
 	//コンストラクタ

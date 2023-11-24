@@ -18,6 +18,7 @@ void Arrow::Initialize()
     //モデルデータのロード
     hModel_ = Model::Load("Assets/Arrow.fbx");
     assert(hModel_ >= 0);
+    SetScale({ 0.25f, 0.25f, 0.25f });
 }
 
 //更新

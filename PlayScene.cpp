@@ -1,6 +1,7 @@
 #include "PlayScene.h"
 #include "Ground.h"
 #include "Ball.h"
+#include "Engine/Camera.h"
 //コンストラクタ
 PlayScene::PlayScene(GameObject* parent)
 	: GameObject(parent, "PlayScene")
@@ -11,18 +12,15 @@ PlayScene::PlayScene(GameObject* parent)
 //初期化
 void PlayScene::Initialize()
 {
-	//Instantiate<Ground>(this);
+	Instantiate<Ground>(this);
 	Instantiate<Ball>(this);
 	//Instantiate<Arrow>(this);
-	//arrowX = Instantiate<Arrow>(this);
-	//arrowY = new Arrow(this);
-	//arrowZ = new Arrow(this);
-	//Player* pPlayer;
-	//pPlayer = new Player(this);
-	//pPlayer->Initialize();
-	//childList_.push_back(pPlayer);
-	//Quad* q = Instantiate<Quad>(this);
-	//Instantiate<Enemy>(this);
+	pArrowX = (Arrow*)Instantiate<Arrow>(this);
+	pArrowY = (Arrow*)Instantiate<Arrow>(this);
+	pArrowZ = (Arrow*)Instantiate<Arrow>(this);
+	pArrowY->SetRotate({ 0,0,90 });
+	pArrowZ->SetRotate({ 0,-90,0 });
+	Camera::SetPosition(XMVECTOR{ 3,6,-3,0});
 }
 
 //更新
