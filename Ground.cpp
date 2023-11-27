@@ -23,6 +23,7 @@ void Ground::Initialize()
 //XV
 void Ground::Update()
 {
+    transform_.rotate_.z--;
 }
 
 //•`‰æ
