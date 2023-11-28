@@ -39,7 +39,9 @@ class Fbx
 		XMMATRIX	matWVP;
 		XMMATRIX	matNormal;		//matWからNormalように改名
 		XMFLOAT4	diffuseColor;	//色
-		int			isTextured;		//テクスチャが貼っているか
+		XMFLOAT4	lightDirection;
+		XMFLOAT4	eyePos;
+		BOOL		isTextured;		//テクスチャが貼っているか
 	};
 
 	struct VERTEX

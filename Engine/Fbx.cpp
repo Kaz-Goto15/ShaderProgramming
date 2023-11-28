@@ -3,6 +3,7 @@
 #include "Texture.h"
 #include "directXCollision.h"
 
+const XMFLOAT4 LIGHT_DIRECTION = { 1,5,0,1 };
 Fbx::Fbx() :
 	vertexCount_(0),
 	polygonCount_(0),
@@ -239,6 +240,8 @@ void Fbx::Draw(Transform& transform)
 		cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
 		cb.matNormal = XMMatrixTranspose(transform.GetNormalMatrix());
 		cb.diffuseColor = pMaterialList_[i].diffuse;
+		cb.lightDirection = LIGHT_DIRECTION;
+		XMStoreFloat4(&cb.eyePos, Camera::GetEyePosition());
 		cb.isTextured = pMaterialList_[i].pTexture != nullptr;
 
 		D3D11_MAPPED_SUBRESOURCE pdata;
