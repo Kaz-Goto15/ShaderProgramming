@@ -36,12 +36,16 @@ class Fbx
 
 	struct CONSTANT_BUFFER
 	{
-		XMMATRIX	matWVP;
-		XMMATRIX	matNormal;		//matWからNormalように改名
-		XMFLOAT4	diffuseColor;	//色
-		XMFLOAT4	lightDirection;
-		XMFLOAT4	eyePos;
-		BOOL		isTextured;		//テクスチャが貼っているか
+		XMMATRIX	matWVP;			// ワールド・ビュー・プロジェクションの合成行列
+		XMMATRIX	matNormal;        //法線行列
+		XMMATRIX	matW;				//ワールド変換行列
+		XMFLOAT4	lightDir;			//ライトの方向ベクトル
+		XMFLOAT4	diffuseColor;		// ディフューズカラー（マテリアルの色） = 拡散反射係数
+		//XMFLOAT4	ambientColor;		//アンビエントカラー(影)
+		//XMFLOAT4	specularColor;	//スペキュラカラー(ハイライト色)
+		XMFLOAT4	eyePos;			//カメラ位置
+		//FLOAT		shininess;		//ハイライトの強さ
+		BOOL		isTextured;		// テクスチャ貼ってあるかどうか
 	};
 
 	struct VERTEX

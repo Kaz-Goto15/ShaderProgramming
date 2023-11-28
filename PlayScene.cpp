@@ -2,6 +2,7 @@
 #include "Ground.h"
 #include "Ball.h"
 #include "Engine/Camera.h"
+#include "Controller.h"
 //コンストラクタ
 PlayScene::PlayScene(GameObject* parent)
 	: GameObject(parent, "PlayScene")
@@ -12,6 +13,7 @@ PlayScene::PlayScene(GameObject* parent)
 //初期化
 void PlayScene::Initialize()
 {
+	Instantiate<Controller>(this);
 	Instantiate<Ground>(this);
 	Instantiate<Ball>(this);
 	//Instantiate<Arrow>(this);

@@ -15,7 +15,7 @@ Fbx::Fbx() :
 {
 }
 
-//ロードロードロードローラー
+//ロード
 HRESULT Fbx::Load(std::string fileName)
 {
 	//マネージャを生成
@@ -210,6 +210,7 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 			pMaterialList_[i].pTexture = new Texture;
 			HRESULT hr = pMaterialList_[i].pTexture->Load(name);
 			assert(hr == S_OK);
+			//pMaterialList_->specular = XMFLOAT4(1, 1, 1, 0.5);
 		}
 
 		//テクスチャ無し
@@ -220,6 +221,7 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 			//マテリアルの色
 			FbxSurfaceLambert* pMaterial = (FbxSurfaceLambert*)pNode->GetMaterial(i);
 			FbxDouble3  diffuse = pMaterial->Diffuse;
+
 			//pMaterialList_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
 			XMFLOAT4 col = { 1,1,0,1 };
 			pMaterialList_[i].diffuse = col;
@@ -237,10 +239,11 @@ void Fbx::Draw(Transform& transform)
 	{
 		//コンスタントバッファに情報を渡す
 		CONSTANT_BUFFER cb;
-		cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
-		cb.matNormal = XMMatrixTranspose(transform.GetNormalMatrix());
+		cb.matWVP		= XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
+		cb.matNormal	= XMMatrixTranspose(transform.GetNormalMatrix());
+		cb.matW			= XMMatrixTranspose(transform.GetWorldMatrix());
+		cb.lightDir = LIGHT_DIRECTION;
 		cb.diffuseColor = pMaterialList_[i].diffuse;
-		cb.lightDirection = LIGHT_DIRECTION;
 		XMStoreFloat4(&cb.eyePos, Camera::GetEyePosition());
 		cb.isTextured = pMaterialList_[i].pTexture != nullptr;
 
