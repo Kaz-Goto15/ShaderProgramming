@@ -64,3 +64,10 @@ XMVECTOR Camera::GetEyePosition()
 {
 	return position_;
 }
+
+XMFLOAT4 Camera::GetTarget()
+{
+	XMFLOAT4 ret;
+	XMStoreFloat4(&ret, target_);
+	return ret;
+}

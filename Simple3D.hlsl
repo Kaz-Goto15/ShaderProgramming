@@ -13,10 +13,11 @@ cbuffer global
 	float4x4	g_matWVP;			// ワールド・ビュー・プロジェクションの合成行列
 	float4x4	g_matNormal;        //法線行列
 	float4x4	g_matW;				//ワールド変換行列
-	float4		g_lightDir;			//ライトの方向ベクトル
+	//float4		g_lightDir;			//ライトの方向ベクトル
 	float4		g_diffuseColor;		// ディフューズカラー（マテリアルの色） = 拡散反射係数
 	//float4		g_ambientColor;		//アンビエントカラー(影)
 	//float4		g_specularColor;	//スペキュラカラー(ハイライト色)
+	float4		g_lightPosition;	//ライト位置
 	float4		g_eyePos;			//カメラ位置
 	//float		g_shininess;		//ハイライトの強さ
 	bool		g_isTextured;		// テクスチャ貼ってあるかどうか
@@ -28,10 +29,11 @@ cbuffer global
 //───────────────────────────────────────
 struct VS_OUT
 {
-	float4 pos  : SV_POSITION;	//位置
-	float2 uv	: TEXCOORD0;		//UV座標
-	float4 eye	:	TEXCOORD1;
-	float4 normal : TEXCOORD2;
+	float4 pos		: SV_POSITION;	//位置
+	float2 uv		: TEXCOORD;		//UV座標
+	float4 color	: COLOR;		//
+	float4 eye		: POSITION;
+	float4 normal	: NORMAL;
 };
 
 //───────────────────────────────────────
@@ -40,23 +42,23 @@ struct VS_OUT
 VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
 {
 	//ピクセルシェーダーへ渡す情報
-	VS_OUT outData;
+	VS_OUT outData = (VS_OUT)0;
 
-	//ローカル座標に、ワールド・ビュー・プロジェクション行列をかけて
-	//スクリーン座標に変換し、ピクセルシェーダーへ
-	outData.pos = mul(pos, g_matWVP);
+	outData.pos = mul(pos, g_matWVP);	//ローカル座標にWVP行列かけスクリーン座標に変換
+	outData.uv = uv;
+
+	float4 light = normalize(g_lightPosition);
+	light = normalize(light);
+	outData.color = saturate(dot(normal, light));
+
+	float4 worldPos = mul(pos, g_matW);				//ローカル座標にワールド行列をかけワールド座標へ
+	outData.eye = normalize(g_eyePos - worldPos);	//視点から頂点情報を引き算、視線を求めピクセルシェーダへ
 
 	//法線を変形
 	normal.w = 0;							//4次元目は0
 	normal = mul(normal, g_matNormal);	//オブジェクト変形に並び法線も変形
+	normal = normalize(normal);
 	outData.normal = normal;				//ピクセルシェーダへ
-
-	//視線ベクトル
-	float4 worldPos = mul(pos, g_matW);				//ローカル座標にワールド行列をかけワールド座標へ
-	outData.eye = normalize(g_eyePos - worldPos);	//視点から頂点情報を引き算、視線を求めピクセルシェーダへ
-	
-	//UV座標はそのままピクセルシェーダへ
-	outData.uv = uv;
 
 	//まとめて出力
 	return outData;
@@ -75,9 +77,10 @@ float4 PS(VS_OUT inData) : SV_Target
 
 	/////////////////////////////////
 	//ライトの向き
-	float4 lightDir = g_lightDir;	//グルーバル変数は変更できないので、いったんローカル変数へ
-	lightDir = normalize(lightDir);	//向きだけが必要なので正規化
-
+	//float4 lightDir = g_lightDir;	//グルーバル変数は変更できないので、いったんローカル変数へ
+	//lightDir = normalize(lightDir);	//向きだけが必要なので正規化
+	float4 lightDir = { 1,5,0,1 };
+	lightDir = normalize(lightDir);
 	//法線はピクセルシェーダーに持ってきた時点で補完され長さが変わっているため正規化
 	inData.normal = normalize(inData.normal);
 
@@ -106,3 +109,14 @@ float4 PS(VS_OUT inData) : SV_Target
 	//最終的な色
 	return diffuse * shade + diffuse * ambient + specular;
 }
+
+/*
+float4 lightSource = float4();
+float4 ambientSource = float4();
+float4 diffuse;
+float4 ambient;
+float4 NL = saturate(dot(inData.normal, -lightDir);
+float4 reflect = normalize(2 * NL);
+float4 specular = pow(saturate(dot(reflect
+
+*/

@@ -37,6 +37,7 @@ void Model::SetTransform(int hModel, Transform transform)
 
 void Model::Draw(int hModel)
 {
+	modelList_[hModel]->pFbx_->SetLightSourcePosition(Camera::GetTarget());
 	modelList_[hModel]->pFbx_->Draw(modelList_[hModel]->transform_);
 }
 

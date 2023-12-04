@@ -23,6 +23,7 @@ void PlayScene::Initialize()
 	pArrowY->SetRotate({ 0,0,90 });
 	pArrowZ->SetRotate({ 0,-90,0 });
 	Camera::SetPosition(XMVECTOR{ 3,6,-3,0});
+	Camera::SetTarget({ 0, 10, 0, 0 });
 }
 
 //XV

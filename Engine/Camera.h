@@ -30,4 +30,6 @@ namespace Camera
 	XMMATRIX GetProjectionMatrix();
 
 	XMVECTOR GetEyePosition();
+
+	XMFLOAT4 GetTarget();
 };
