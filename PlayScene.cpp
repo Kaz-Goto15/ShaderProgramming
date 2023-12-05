@@ -3,6 +3,7 @@
 #include "Ball.h"
 #include "Engine/Camera.h"
 #include "Controller.h"
+#include "Torus.h"
 //コンストラクタ
 PlayScene::PlayScene(GameObject* parent)
 	: GameObject(parent, "PlayScene")
@@ -14,16 +15,17 @@ PlayScene::PlayScene(GameObject* parent)
 void PlayScene::Initialize()
 {
 	Instantiate<Controller>(this);
-	Instantiate<Ground>(this);
-	Instantiate<Ball>(this);
-	//Instantiate<Arrow>(this);
-	pArrowX = (Arrow*)Instantiate<Arrow>(this);
-	pArrowY = (Arrow*)Instantiate<Arrow>(this);
-	pArrowZ = (Arrow*)Instantiate<Arrow>(this);
-	pArrowY->SetRotate({ 0,0,90 });
-	pArrowZ->SetRotate({ 0,-90,0 });
-	Camera::SetPosition(XMVECTOR{ 3,6,-3,0});
-	Camera::SetTarget({ 0, 10, 0, 0 });
+	Instantiate<Torus>(this);
+	//Instantiate<Ground>(this);
+	//Instantiate<Ball>(this);
+	////Instantiate<Arrow>(this);
+	//pArrowX = (Arrow*)Instantiate<Arrow>(this);
+	//pArrowY = (Arrow*)Instantiate<Arrow>(this);
+	//pArrowZ = (Arrow*)Instantiate<Arrow>(this);
+	//pArrowY->SetRotate({ 0,0,90 });
+	//pArrowZ->SetRotate({ 0,-90,0 });
+	//Camera::SetPosition(XMVECTOR{ 3,6,-3,0});
+	//Camera::SetTarget({ 0, 10, 0, 0 });
 }
 
 //更新
