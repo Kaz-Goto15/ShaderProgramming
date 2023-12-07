@@ -13,13 +13,12 @@ cbuffer global
 	float4x4	g_matWVP;			// ワールド・ビュー・プロジェクションの合成行列
 	float4x4	g_matNormal;        //法線行列
 	float4x4	g_matW;				//ワールド変換行列
-	//float4		g_lightDir;			//ライトの方向ベクトル
+	float4		g_lightDir;			//ライトの方向ベクトル
 	float4		g_diffuseColor;		// ディフューズカラー（マテリアルの色） = 拡散反射係数
-	//float4		g_ambientColor;		//アンビエントカラー(影)
-	//float4		g_specularColor;	//スペキュラカラー(ハイライト色)
-	float4		g_lightPosition;	//ライト位置
+	float4		g_ambientColor;		//アンビエントカラー(影)
+	float4		g_specularColor;	//スペキュラカラー(ハイライト色)
+	float		g_shininess;		//ハイライトの強さ
 	float4		g_eyePos;			//カメラ位置
-	//float		g_shininess;		//ハイライトの強さ
 	bool		g_isTextured;		// テクスチャ貼ってあるかどうか
 
 };
@@ -31,7 +30,6 @@ struct VS_OUT
 {
 	float4 pos		: SV_POSITION;	//位置
 	float2 uv		: TEXCOORD;		//UV座標
-	float4 color	: COLOR;		//
 	float4 eye		: POSITION;
 	float4 normal	: NORMAL;
 };
@@ -47,10 +45,6 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
 	outData.pos = mul(pos, g_matWVP);	//ローカル座標にWVP行列かけスクリーン座標に変換
 
 	outData.uv = uv;
-
-	float4 light = normalize(g_lightPosition);
-	light = normalize(light);
-	outData.color = saturate(dot(normal, light));
 
 	float4 worldPos = mul(pos, g_matW);				//ローカル座標にワールド行列をかけワールド座標へ
 	outData.eye = normalize(g_eyePos - worldPos);	//視点から頂点情報を引き算、視線を求めピクセルシェーダへ
@@ -70,7 +64,7 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
 //───────────────────────────────────────
 float4 PS(VS_OUT inData) : SV_Target
 {
-
+	/*
 	float4 lightSource = float4(1.0, 1.0, 1.0, 1.0);
 	float4 ambientSource = float4(0.2, 0.2, 0.2, 1.0);
 
@@ -78,7 +72,9 @@ float4 PS(VS_OUT inData) : SV_Target
 	float4 ambient;
 	float4 NL = saturate(dot(inData.normal, normalize(g_lightPosition)));
 	float4 reflect = normalize(2 * NL * inData.normal - normalize(g_lightPosition));
-	float4 specular = pow(saturate(dot(reflect, normalize(inData.eye))), 8);
+	//float4 specular = pow(saturate(dot(reflect, normalize(inData.eye))), 8);
+	float4 specular = pow(saturate(dot(reflect, normalize(inData.eye))), g_shininess) * g_specularColor;
+
 	if (g_isTextured == 0) {
 		diffuse = lightSource * g_diffuseColor * inData.color;
 		ambient = lightSource * g_diffuseColor * ambientSource;
@@ -89,6 +85,38 @@ float4 PS(VS_OUT inData) : SV_Target
 	}
 
 	return diffuse + ambient + specular;
+	*/
+
+	float4 lightDir = g_lightDir;
+	lightDir = normalize(lightDir);
+
+	//diffuse
+	float4 shade = saturate(dot(inData.normal, -lightDir));
+	shade.a = 1;
+	float4 diffuse;
+
+	//マテリアル色(テクスチャ有無)
+	if (g_isTextured == 0) {
+		diffuse = g_diffuseColor;
+	}
+	else {
+		diffuse = g_texture.Sample(g_sampler, inData.uv);
+	}
+
+	//ambient
+	float4 ambient = g_ambientColor;
+
+	//specular
+	float4 specular = float4(0, 0, 0, 0);
+	if (g_specularColor.a != 0) {
+		float4 ref = reflect(lightDir, inData.normal);
+		specular = pow(saturate(dot(ref, inData.eye)), g_shininess) * g_specularColor;
+		//specular = pow(saturate(dot(reflect, normalize(inData.eye))), g_shininess) * g_specularColor;
+	}
+
+	return diffuse * shade + diffuse * ambient + specular;
+
+
 	//float shininess = 8;
 	//
 	///////////////////////////////////
