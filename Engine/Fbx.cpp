@@ -222,9 +222,9 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 			FbxSurfaceLambert* pMaterial = (FbxSurfaceLambert*)pNode->GetMaterial(i);
 			FbxDouble3  diffuse = pMaterial->Diffuse;
 
-			//pMaterialList_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
-			XMFLOAT4 col = { 1,1,0,1 };
-			pMaterialList_[i].diffuse = col;
+			pMaterialList_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
+			//XMFLOAT4 col = { 1,1,0,1 };
+			//pMaterialList_[i].diffuse = col;
 
 		}
 	}
@@ -238,21 +238,21 @@ void Fbx::Draw(Transform& transform)
 	for (int i = 0; i < materialCount_; i++)
 	{
 		//コンスタントバッファに情報を渡す
-		CONSTANT_BUFFER cb;
+		CBUFFF_MODEL cb;
 		cb.matWVP		= XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
 		cb.matNormal	= XMMatrixTranspose(transform.GetNormalMatrix());
 		cb.matW			= XMMatrixTranspose(transform.GetWorldMatrix());
 		//cb.lightDir = LIGHT_DIRECTION;
-		cb.lightPosition = lightSourcePosition_;
+		//cb.lightPosition = lightSourcePosition_;
 		cb.diffuseColor = pMaterialList_[i].diffuse;
-		XMStoreFloat4(&cb.eyePos, Camera::GetEyePosition());
+		//XMStoreFloat4(&cb.eyePos, Camera::GetEyePosition());
 		cb.isTextured = pMaterialList_[i].pTexture != nullptr;
 
-		D3D11_MAPPED_SUBRESOURCE pdata;
-		Direct3D::pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
-		memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));	// データを値を送る
-
-		Direct3D::pContext_->Unmap(pConstantBuffer_, 0);	//再開
+		//D3D11_MAPPED_SUBRESOURCE pdata;
+		//Direct3D::pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
+		//memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));	// データを値を送る
+		//Direct3D::pContext_->Unmap(pConstantBuffer_, 0);	//再開
+		Direct3D::pContext_->UpdateSubresource(pConstantBuffer_, 0, NULL, &cb, 0, 0);
 
 		//頂点バッファ、インデックスバッファ、コンスタントバッファをパイプラインにセット
 		//頂点バッファ
@@ -273,6 +273,7 @@ void Fbx::Draw(Transform& transform)
 		{
 			ID3D11SamplerState* pSampler = pMaterialList_[i].pTexture->GetSampler();
 			Direct3D::pContext_->PSSetSamplers(0, 1, &pSampler);
+
 			ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pTexture->GetSRV();
 			Direct3D::pContext_->PSSetShaderResources(0, 1, &pSRV);
 		}
