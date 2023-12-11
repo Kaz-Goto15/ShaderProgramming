@@ -22,7 +22,7 @@ class PlayScene : public GameObject
 	ID3D11Buffer* pCBPlayScene_;
 
 	int hModel_;
-	void IntConstantBuffer();
+	void InitConstantBuffer();
 	XMFLOAT4 lightSourcePosition_;
 public:
 	//コンストラクタ

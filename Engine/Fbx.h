@@ -43,9 +43,9 @@ class Fbx
 		XMMATRIX	matW;			//ワールド変換行列
 		//XMFLOAT4	lightDirection;	//ライトの方向ベクトル
 		XMFLOAT4	diffuseColor;	//マテリアルの色 FBXから取ってくる / 拡散反射係数
-		//XMFLOAT4	ambientColor;	//アンビエントカラー(影)
-		//XMFLOAT4	specularColor;	//スペキュラカラー(ハイライト色)
-		//FLOAT		shininess;		//ハイライトの強さ
+		XMFLOAT4	ambientColor;	//アンビエントカラー(影)
+		XMFLOAT4	specularColor;	//スペキュラカラー(ハイライト色)
+		FLOAT		shininess;		//ハイライトの強さ
 		BOOL		isTextured;		// テクスチャ貼ってあるかどうか
 	};
 	struct CONSTANT_BUFFER

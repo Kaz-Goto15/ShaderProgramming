@@ -15,9 +15,9 @@ cbuffer global:register(b0)
 	float4x4	g_matW;				//ワールド変換行列
 	//float4		g_lightDir;			//ライトの方向ベクトル
 	float4		g_diffuseColor;		// ディフューズカラー（マテリアルの色） = 拡散反射係数
-	//float4		g_ambientColor;		//アンビエントカラー(影)
-	//float4		g_specularColor;	//スペキュラカラー(ハイライト色)
-	//float		g_shininess;		//ハイライトの強さ
+	float4		g_ambientColor;		//アンビエントカラー(影)
+	float4		g_specularColor;	//スペキュラカラー(ハイライト色)
+	float		g_shininess;		//ハイライトの強さ
 	bool		g_isTextured;		// テクスチャ貼ってあるかどうか
 
 };
@@ -82,6 +82,11 @@ float4 PS(VS_OUT inData) : SV_Target
 	float4 NL = saturate(dot(inData.normal, normalize(g_lightPosition)));
 	float4 reflect = normalize(2 * NL * inData.normal - normalize(g_lightPosition));
 	float4 specular = pow(saturate(dot(reflect, normalize(inData.eye))), 8);
+
+	//float4 NL = dot(inData.light, inData.normal);
+	//float4 R = normalize(2 * NL * inData.normal - inData.light);
+	//specular = pow(saturate(dot(R, normalize(inData.campos))), n) * specularColor;
+
 	if (g_isTextured == 0) {
 		diffuse = lightSource * g_diffuseColor * inData.color;
 		ambient = lightSource * g_diffuseColor * ambientSource;
