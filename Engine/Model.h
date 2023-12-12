@@ -4,6 +4,9 @@
 #include "Transform.h"
 #include "Fbx.h"
 
+#define SAFE_RELEASE(p) if(p != nullptr){ p->Release(); p = nullptr;}
+#define SAFE_DELETE(p) if(p != nullptr){ delete p; p = nullptr;}
+
 namespace Model
 {
 	//struct ModelData {

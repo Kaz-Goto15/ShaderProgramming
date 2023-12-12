@@ -1,9 +1,10 @@
 #include "Fbx.h"
 #include "Direct3D.h"
+#include "Camera.h"
 #include "Texture.h"
 #include "directXCollision.h"
 
-const XMFLOAT4 LIGHT_DIRECTION = { 1,5,0,1 };
+const XMFLOAT4 LIGHT_POSITION = { 1,5,0,1 };
 Fbx::Fbx() :
 	vertexCount_(0),
 	polygonCount_(0),
@@ -167,9 +168,9 @@ void Fbx::IntConstantBuffer()
 {
 	D3D11_BUFFER_DESC cb;
 	cb.ByteWidth = sizeof(CONSTANT_BUFFER);
-	cb.Usage = D3D11_USAGE_DYNAMIC;
+	cb.Usage = D3D11_USAGE_DEFAULT;
 	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cb.CPUAccessFlags = 0;
 	cb.MiscFlags = 0;
 	cb.StructureByteStride = 0;
 
@@ -195,20 +196,20 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 		int fileTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
 
 		//マテリアルの色
-		FbxSurfacePhong* pPhong = (FbxSurfacePhong*)pNode->GetMaterial(i);
-		FbxDouble3  diffuse = pPhong->Diffuse;
-		FbxDouble3	ambient = pPhong->Ambient;
-		pMaterialList_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
-		pMaterialList_[i].ambient = XMFLOAT4((float)ambient[0], (float)ambient[1], (float)ambient[2], 1.0f);
-		pMaterialList_[i].specular = XMFLOAT4{ 0,0,0,0 };
-		pMaterialList_[i].shininess = 0.0f;
-
-		if (pMaterial->GetClassId().Is(FbxSurfacePhong::ClassId))
-		{
-			FbxDouble3 specular = pPhong->Specular;
-			pMaterialList_[i].specular = XMFLOAT4((float)specular[0], (float)specular[1], (float)specular[2], 1.0f);
-			pMaterialList_[i].shininess = (float)pPhong->Shininess;
-		}
+		//FbxSurfacePhong* pPhong = (FbxSurfacePhong*)pNode->GetMaterial(i);
+		//FbxDouble3  diffuse = pPhong->Diffuse;
+		//FbxDouble3	ambient = pPhong->Ambient;
+		//pMaterialList_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
+		//pMaterialList_[i].ambient = XMFLOAT4((float)ambient[0], (float)ambient[1], (float)ambient[2], 1.0f);
+		//pMaterialList_[i].specular = XMFLOAT4{ 0,0,0,0 };
+		//pMaterialList_[i].shininess = 0.0f;
+		//
+		//if (pMaterial->GetClassId().Is(FbxSurfacePhong::ClassId))
+		//{
+		//	FbxDouble3 specular = pPhong->Specular;
+		//	pMaterialList_[i].specular = XMFLOAT4((float)specular[0], (float)specular[1], (float)specular[2], 1.0f);
+		//	pMaterialList_[i].shininess = (float)pPhong->Shininess;
+		//}
 
 		//テクスチャあり
 		if (fileTextureCount)
@@ -232,15 +233,15 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 		//テクスチャ無し
 		else
 		{
-			//pMaterialList_[i].pTexture = nullptr;
-			//
-			////マテリアルの色
-			//FbxSurfaceLambert* pMaterial = (FbxSurfaceLambert*)pNode->GetMaterial(i);
-			//FbxDouble3  diffuse = pMaterial->Diffuse;
-			//
-			//pMaterialList_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
-			////XMFLOAT4 col = { 1,1,0,1 };
-			////pMaterialList_[i].diffuse = col;
+			pMaterialList_[i].pTexture = nullptr;
+			
+			//マテリアルの色
+			FbxSurfaceLambert* pMaterial = (FbxSurfaceLambert*)pNode->GetMaterial(i);
+			FbxDouble3  diffuse = pMaterial->Diffuse;
+			
+			pMaterialList_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
+			//XMFLOAT4 col = { 1,1,0,1 };
+			//pMaterialList_[i].diffuse = col;
 
 		}
 	}
@@ -261,17 +262,17 @@ void Fbx::Draw(Transform& transform)
 		//cb.lightDir = LIGHT_DIRECTION;
 		//cb.lightPosition = lightSourcePosition_;
 		cb.diffuseColor = pMaterialList_[i].diffuse;
-		cb.ambientColor = pMaterialList_[i].ambient;
-		cb.specularColor = pMaterialList_[i].specular;
-		cb.shininess = pMaterialList_[i].shininess;
+		//cb.ambientColor = pMaterialList_[i].ambient;
+		//cb.specularColor = pMaterialList_[i].specular;
+		//cb.shininess = pMaterialList_[i].shininess;
 		//XMStoreFloat4(&cb.eyePos, Camera::GetEyePosition());
 		cb.isTextured = pMaterialList_[i].pTexture != nullptr;
 
-		D3D11_MAPPED_SUBRESOURCE pdata;
-		Direct3D::pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
-		memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));	// データを値を送る
-		Direct3D::pContext_->Unmap(pConstantBuffer_, 0);	//再開
-		//Direct3D::pContext_->UpdateSubresource(pConstantBuffer_, 0, NULL, &cb, 0, 0);
+		//D3D11_MAPPED_SUBRESOURCE pdata;
+		//Direct3D::pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
+		//memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));	// データを値を送る
+		//Direct3D::pContext_->Unmap(pConstantBuffer_, 0);	//再開
+		Direct3D::pContext_->UpdateSubresource(pConstantBuffer_, 0, NULL, &cb, 0, 0);
 
 		//頂点バッファ、インデックスバッファ、コンスタントバッファをパイプラインにセット
 		//頂点バッファ

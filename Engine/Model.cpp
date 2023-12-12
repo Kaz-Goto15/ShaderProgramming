@@ -1,5 +1,5 @@
 #include "Model.h"
-
+#include "Camera.h"
 namespace Model {
 	struct  ModelData
 	{
