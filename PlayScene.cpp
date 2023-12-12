@@ -44,7 +44,7 @@ void PlayScene::InitConstantBuffer()
 {
 	D3D11_BUFFER_DESC cb;
 	cb.ByteWidth = sizeof(CBUFF_PLAYSCENE);
-	cb.Usage = D3D11_USAGE_DEFAULT;
+	cb.Usage = D3D11_USAGE_DYNAMIC;
 	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	//cb.CPUAccessFlags = 0;

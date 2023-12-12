@@ -56,7 +56,7 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
 	outData.color = saturate(dot(normal, light));
 
 	float4 worldPos = mul(pos, g_matW);				//ローカル座標にワールド行列をかけワールド座標へ
-	outData.eye = normalize(g_eyePosition - worldPos);	//視点から頂点情報を引き算、視線を求めピクセルシェーダへ
+	outData.eye = g_eyePosition - worldPos;	//視点から頂点情報を引き算、視線を求めピクセルシェーダへ
 
 	//法線を変形
 	normal.w = 0;							//4次元目は0
