@@ -40,8 +40,8 @@ class Fbx
 		XMMATRIX	matNormal;		//法線行列 スケール×平行移動の逆行列
 		XMMATRIX	matW;			//ワールド変換行列
 		XMFLOAT4	diffuseColor;	//マテリアルの色 FBXから取ってくる / 拡散反射係数
-		XMFLOAT4	lightPosition;
-		XMFLOAT4	eyePos;			//カメラ位置
+		//XMFLOAT4	lightPosition;
+		//XMFLOAT4	eyePos;			//カメラ位置
 		BOOL		isTextured;		// テクスチャ貼ってあるかどうか
 
 		//XMFLOAT4	lightDir;		//ライトの方向ベクトル
@@ -50,7 +50,6 @@ class Fbx
 		//FLOAT		shininess;		//ハイライトの強さ
 
 	};
-
 	struct VERTEX
 	{
 		XMVECTOR position;	//位置

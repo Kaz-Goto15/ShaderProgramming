@@ -15,7 +15,8 @@ Controller::Controller(GameObject* parent) :
 	minCamDist(2.5f),
 	camDistUnit(1.0f),
 	camDistReg(0.05f),
-	modifyMode(MD_DEFAULT)
+	modifyMode(MD_DEFAULT),
+	lock(false)
 {
 	transform_.rotate_.x = 45.5;
 }
@@ -111,10 +112,13 @@ void Controller::Update()
 	//カメラ設定 位置->対象の後方
 	XMVECTOR vCam = { 0,0,-camDistance,0 };                  //距離指定
 	vCam = XMVector3TransformCoord(vCam, mRotX * mRotY);    //変形:回転
-	Camera::SetPosition(vPos + vCam);            //セット
 
-	Camera::SetTarget(transform_.position_);
+	if (Input::IsKeyDown(DIK_SPACE))lock = !lock;
+	if (!lock) {
+		Camera::SetPosition(vPos + vCam);            //セット
 
+		Camera::SetTarget(transform_.position_);
+	}
 }
 
 //描画

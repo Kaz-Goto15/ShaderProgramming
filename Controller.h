@@ -21,6 +21,7 @@ namespace {
 //‘€ì‚ğŠÇ—‚·‚éƒNƒ‰ƒX
 class Controller : public GameObject
 {
+    bool lock;
     int movcode[MV_MAX]{ 0 };
     float movSpdRotate_[MV_MAX]{ 0 };
     float movSpd_, movMaxSpd_;
@@ -40,4 +41,5 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
+    XMFLOAT3 GetPosition() { return transform_.position_; }
 };
