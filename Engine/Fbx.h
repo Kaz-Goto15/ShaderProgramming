@@ -32,6 +32,9 @@ class Fbx
 	{
 		Texture* pTexture;
 		XMFLOAT4 diffuse;
+		XMFLOAT4 ambient;
+		XMFLOAT4 specular;
+		float	 shininess;
 	};
 
 	struct CONSTANT_BUFFER
@@ -40,14 +43,10 @@ class Fbx
 		XMMATRIX	matNormal;		//法線行列 スケール×平行移動の逆行列
 		XMMATRIX	matW;			//ワールド変換行列
 		XMFLOAT4	diffuseColor;	//マテリアルの色 FBXから取ってくる / 拡散反射係数
-		//XMFLOAT4	lightPosition;
-		//XMFLOAT4	eyePos;			//カメラ位置
+		XMFLOAT4	ambientColor;	//アンビエントカラー(影)
+		XMFLOAT4	specularColor;	//スペキュラカラー(ハイライト色)
+		FLOAT		shininess;		//ハイライトの強さ
 		BOOL		isTextured;		// テクスチャ貼ってあるかどうか
-
-		//XMFLOAT4	lightDir;		//ライトの方向ベクトル
-		//XMFLOAT4	ambientColor;	//アンビエントカラー(影)
-		//XMFLOAT4	specularColor;	//スペキュラカラー(ハイライト色)
-		//FLOAT		shininess;		//ハイライトの強さ
 
 	};
 	struct VERTEX

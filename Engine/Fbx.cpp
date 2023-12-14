@@ -191,15 +191,19 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 		//色情報格納
 		FbxDouble3  diffuse = pPhong->Diffuse;
 		FbxDouble3  ambient = pPhong->Ambient;
+
 		pMaterialList_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
-		//pMaterialList_[i].ambient = XMFLOAT4((float)ambient[0], (float)ambient[1], (float)ambient[2], 1.0f);
-		//pMaterialList_[i].specular = XMFLOAT4{ 0,0,0,0 };
-		//pMaterialList_[i].shininess = 1.0f;
+		pMaterialList_[i].ambient = XMFLOAT4((float)ambient[0], (float)ambient[1], (float)ambient[2], 1.0f);
+		pMaterialList_[i].specular = XMFLOAT4( 0,0,0,0 );	//デフォは黒とする
+		pMaterialList_[i].shininess = 1.0f;
+
+		//Phongの場合
 		if (pPhong->GetClassId().Is(FbxSurfacePhong::ClassId))
 		{
+			//情報を上書き
 			FbxDouble3 specular = pPhong->Specular;
-			//pMaterialList_[i].specular = XMFLOAT4((float)specular[0], (float)specular[1], (float)specular[2], 1.0f);
-			//pMaterialList_[i].shininess = (float)pPhong->Shininess;
+			pMaterialList_[i].specular = XMFLOAT4((float)specular[0], (float)specular[1], (float)specular[2], 1.0f);
+			pMaterialList_[i].shininess = (float)pPhong->Shininess;
 		}
 
 		//テクスチャ情報
@@ -229,53 +233,6 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 			assert(hr == S_OK);
 		}
 	}
-	/*
-	for (int i = 0; i < materialCount_; i++)
-	{
-		//i番目のマテリアル情報を取得
-		FbxSurfaceMaterial* pMaterial = pNode->GetMaterial(i);
-
-		//テクスチャ情報
-		FbxProperty  lProperty = pMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
-
-		//テクスチャの数数
-		int fileTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
-
-		//テクスチャあり
-		if (fileTextureCount)
-		{
-			FbxFileTexture* textureInfo = lProperty.GetSrcObject<FbxFileTexture>(0);
-			const char* textureFilePath = textureInfo->GetRelativeFileName();
-
-			//ファイル名+拡張だけにする
-			char name[_MAX_FNAME];	//ファイル名
-			char ext[_MAX_EXT];	//拡張子
-			_splitpath_s(textureFilePath, nullptr, 0, nullptr, 0, name, _MAX_FNAME, ext, _MAX_EXT);
-			wsprintf(name, "%s%s", name, ext);
-
-			//ファイルからテクスチャ作成
-			pMaterialList_[i].pTexture = new Texture;
-			HRESULT hr = pMaterialList_[i].pTexture->Load(name);
-			assert(hr == S_OK);
-			//pMaterialList_->specular = XMFLOAT4(1, 1, 1, 0.5);
-		}
-
-		//テクスチャ無し
-		else
-		{
-			pMaterialList_[i].pTexture = nullptr;
-
-			//マテリアルの色
-			FbxSurfaceLambert* pMaterial = (FbxSurfaceLambert*)pNode->GetMaterial(i);
-			FbxDouble3  diffuse = pMaterial->Diffuse;
-
-			pMaterialList_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
-			//XMFLOAT4 col = { 1,1,0,1 };
-			//pMaterialList_[i].diffuse = col;
-
-		}
-	}
-	*/
 }
 
 //描画
@@ -290,9 +247,10 @@ void Fbx::Draw(Transform& transform)
 		cb.matWVP		= XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
 		cb.matNormal	= XMMatrixTranspose(transform.GetNormalMatrix());
 		cb.matW			= XMMatrixTranspose(transform.GetWorldMatrix());
-		//cb.lightPosition = lightSourcePosition_;
 		cb.diffuseColor = pMaterialList_[i].diffuse;
-		//XMStoreFloat4(&cb.eyePos, Camera::GetEyePosition());
+		cb.ambientColor = pMaterialList_[i].ambient;
+		cb.specularColor = pMaterialList_[i].specular;
+		cb.shininess = pMaterialList_[i].shininess;
 		cb.isTextured = pMaterialList_[i].pTexture != nullptr;
 
 		D3D11_MAPPED_SUBRESOURCE pdata;

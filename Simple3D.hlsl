@@ -14,9 +14,9 @@ cbuffer global:register(b0)
 	float4x4	g_matNormal;        //法線行列
 	float4x4	g_matW;				//ワールド変換行列
 	float4		g_diffuseColor;		// ディフューズカラー（マテリアルの色） = 拡散反射係数
-	//float4		g_ambientColor;		//アンビエントカラー(影)
-	//float4		g_specularColor;	//スペキュラカラー(ハイライト色)
-	//float		g_shininess;		//ハイライトの強さ
+	float4		g_ambientColor;		//アンビエントカラー(影 0は影が消える)
+	float4		g_specularColor;	//スペキュラカラー(ハイライト色 )
+	float		g_shininess;		//ハイライトの強さ
 	bool		g_isTextured;		// テクスチャ貼ってあるかどうか
 
 };
@@ -72,22 +72,22 @@ float4 PS(VS_OUT inData) : SV_Target
 {
 
 	float4 lightSource = float4(1.0, 1.0, 1.0, 1.0);	//ライト色&明るさ Iin
-	float4 ambientSource = float4(0.2, 0.2, 0.2, 1.0);	//アンビエント係数Ka
+	//float4 ambientSource = float4(0.2, 0.2, 0.2, 1.0);	//アンビエント係数Ka
 
 	float4 diffuse;
 	float4 ambient;
 	float4 NL = dot(inData.normal, normalize(g_lightPosition));				//その面の明るさ
 	float4 reflect = normalize(2 * NL * inData.normal - normalize(g_lightPosition));
-	float4 specular = pow(saturate(dot(reflect, normalize(inData.eye))), 8);			//8はハイライトの大きさ
+	float4 specular = pow(saturate(dot(reflect, normalize(inData.eye))), g_shininess) * g_specularColor;			//8はハイライトの大きさ
 	if (g_isTextured == 0) {
 		diffuse = lightSource * g_diffuseColor * inData.color;
-		ambient = lightSource * g_diffuseColor * ambientSource;
+		ambient = lightSource * g_diffuseColor * g_ambientColor;
 	}
 	else {
 		diffuse = lightSource * g_texture.Sample(g_sampler, inData.uv) * inData.color;
-		ambient = lightSource * g_texture.Sample(g_sampler, inData.uv) * ambientSource;
+		ambient = lightSource * g_texture.Sample(g_sampler, inData.uv) * g_ambientColor;
 	}
-
+	//return g_shininess / 20.0f;
 	return diffuse + ambient + specular;
 	//float shininess = 8;
 	//

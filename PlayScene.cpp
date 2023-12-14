@@ -60,8 +60,8 @@ void PlayScene::Update()
 {
 	lightPos_ = pCtl->GetPosition();
 	CBUFF_STAGESCENE cb;
-	//cb.lightPosition = lightSourcePosition_;
-	cb.lightPosition = Camera::GetTarget();
+	cb.lightPosition = { lightPos_.x, lightPos_.y, lightPos_.z, 0 };
+	//cb.lightPosition = Camera::GetTarget();
 	XMStoreFloat4(&cb.eyePos, Camera::GetEyePosition());
 
 	Direct3D::pContext_->UpdateSubresource(pCBStageScene_,
