@@ -41,7 +41,7 @@ void PlayScene::Initialize()
 	Instantiate<Torus>(this);
 	//Instantiate<Ground>(this);
 	//Instantiate<Ball>(this);
-	////Instantiate<Arrow>(this);
+	//////Instantiate<Arrow>(this);
 	//pArrowX = (Arrow*)Instantiate<Arrow>(this);
 	//pArrowY = (Arrow*)Instantiate<Arrow>(this);
 	//pArrowZ = (Arrow*)Instantiate<Arrow>(this);
@@ -50,8 +50,8 @@ void PlayScene::Initialize()
 	//Camera::SetPosition(XMVECTOR{ 3,6,-3,0});
 	//Camera::SetTarget({ 0, 10, 0, 0 });
 
-	pBall = (Ball*)Instantiate<Ball>(this);
-	pBall->SetPosition(lightPos_);
+	//pBall = (Ball*)Instantiate<Ball>(this);
+	//pBall->SetPosition(lightPos_);
 	InitConstantBuffer();
 }
 

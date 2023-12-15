@@ -78,7 +78,7 @@ float4 PS(VS_OUT inData) : SV_Target
 	float4 ambient;
 	float4 NL = dot(inData.normal, normalize(g_lightPosition));				//その面の明るさ
 	float4 reflect = normalize(2 * NL * inData.normal - normalize(g_lightPosition));
-	float4 specular = pow(saturate(dot(reflect, normalize(inData.eye))), g_shininess) * g_specularColor;			//8はハイライトの大きさ
+	float4 specular = pow(saturate(dot(reflect, normalize(inData.eye))), g_shininess) * g_specularColor;
 	if (g_isTextured == 0) {
 		diffuse = lightSource * g_diffuseColor * inData.color;
 		ambient = lightSource * g_diffuseColor * g_ambientColor;
@@ -87,8 +87,13 @@ float4 PS(VS_OUT inData) : SV_Target
 		diffuse = lightSource * g_texture.Sample(g_sampler, inData.uv) * inData.color;
 		ambient = lightSource * g_texture.Sample(g_sampler, inData.uv) * g_ambientColor;
 	}
+	
 	//return g_shininess / 20.0f;
 	return diffuse + ambient + specular;
+	//return ambient + specular;
+	//return diffuse;
+	//return ambient;
+	//return specular;
 	//float shininess = 8;
 	//
 	///////////////////////////////////

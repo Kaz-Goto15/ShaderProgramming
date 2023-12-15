@@ -1,5 +1,6 @@
 #include "Engine/GameObject.h"
 #include <dinput.h>
+class Ball;
 namespace {
     enum MOVE_KEY {
         MV_FRONT = 0,
@@ -33,7 +34,7 @@ class Controller : public GameObject
     bool enMovInertia_;
     bool canMouseCtlRotate_;
     bool trigger_;
-
+    Ball* pBall;
 public:
     Controller(GameObject* parent);
     ~Controller();
