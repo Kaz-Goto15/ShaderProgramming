@@ -79,6 +79,41 @@ float4 PS(VS_OUT inData) : SV_Target
 	float4 NL = dot(inData.normal, normalize(g_lightPosition));				//その面の明るさ
 	float4 reflect = normalize(2 * NL * inData.normal - normalize(g_lightPosition));
 	float4 specular = pow(saturate(dot(reflect, normalize(inData.eye))), g_shininess) * g_specularColor;
+
+	//トゥーンシェーダ
+	struct TOON_DATA {
+		float t;
+		float4 color;
+	};
+
+	const int td_div = 4;	//分割数
+	TOON_DATA td[td_div] = {//閾値、色を指定
+		{0.2,(float4)0.1},
+		{0.5,(float4)0.2},
+		{0.8,(float4)0.5},
+		{1.0,(float4)1.0},
+	};
+	float4 toonColor;
+	for (int i = 0; i < td_div; i++) {
+		if (inData.color.w < td[i].t) {
+			toonColor = td[i].color;
+			break;
+		}
+	}
+	//float4 toonColor;
+	//if (inData.color.w < 0.2) {
+	//	toonColor = 0;
+	//}
+	//else if (inData.color.w < 0.5) {
+	//	toonColor = float4(0.2, 0.1, 0.8, 1);
+	//}
+	//else if (inData.color.w < 0.8) {
+	//	toonColor = 0.5;
+	//}
+	//else{
+	//	toonColor = 0.8;
+	//}
+
 	if (g_isTextured == 0) {
 		diffuse = lightSource * g_diffuseColor * inData.color;
 		ambient = lightSource * g_diffuseColor * g_ambientColor;
@@ -88,6 +123,7 @@ float4 PS(VS_OUT inData) : SV_Target
 		ambient = lightSource * g_texture.Sample(g_sampler, inData.uv) * g_ambientColor;
 	}
 	
+	return toonColor;
 	//return g_shininess / 20.0f;
 	return diffuse + ambient + specular;
 	//return ambient + specular;
