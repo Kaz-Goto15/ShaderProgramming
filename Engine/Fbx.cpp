@@ -11,7 +11,8 @@ Fbx::Fbx() :
 	pVertexBuffer_(nullptr),
 	pIndexBuffer_(nullptr),
 	pConstantBuffer_(nullptr),
-	pMaterialList_(nullptr)
+	pMaterialList_(nullptr),
+	state_(RENDER_DIRLIGHT)
 {
 }
 

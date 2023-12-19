@@ -14,6 +14,12 @@
 
 using std::vector;
 
+enum RENDER_STATE
+{
+	RENDER_DIRLIGHT,
+	RENDER_PNTLIGHT,
+};
+
 class Texture;
 
 struct RayCastData {
@@ -77,6 +83,7 @@ class Fbx
 	//void SetBufferToPipeline();
 
 	XMFLOAT4 lightSourcePosition_ = {0,0,0,0};
+	RENDER_STATE state_;
 public:
 
 	Fbx();
