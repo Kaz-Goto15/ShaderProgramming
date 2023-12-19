@@ -130,7 +130,7 @@ float4 PS(VS_OUT inData) : SV_Target
 	}
 	
 	//輪郭 = 視線ベクトルと面の法線の
-	if (abs(dot(inData.normal, normal))) {
+	if (abs(dot(inData.normal, normalize()))) {
 		return float4(0, 0, 0, 0);
 	}
 	else {
