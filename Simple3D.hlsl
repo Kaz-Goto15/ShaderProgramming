@@ -4,6 +4,7 @@
 Texture2D		g_texture : register(t0);	//テクスチャー
 SamplerState	g_sampler : register(s0);	//サンプラー
 
+Texture2D		g_toon_texture : register(t1);
 //───────────────────────────────────────
 // コンスタントバッファ
 // DirectX 側から送信されてくる、ポリゴン頂点以外の諸情報の定義
@@ -100,6 +101,9 @@ float4 PS(VS_OUT inData) : SV_Target
 			break;
 		}
 	}
+	float2	uv;
+	uv.x = 0.5;
+	uv.y = 0;
 	//float4 toonColor;
 	//if (inData.color.w < 0.2) {
 	//	toonColor = 0;
