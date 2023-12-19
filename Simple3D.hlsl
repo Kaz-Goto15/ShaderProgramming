@@ -101,9 +101,11 @@ float4 PS(VS_OUT inData) : SV_Target
 			break;
 		}
 	}
+
 	float2	uv;
-	uv.x = 0.5;
+	uv.x = inData.color.x;
 	uv.y = 0;
+	float4 tI = g_toon_texture.Sample(g_sampler, uv);
 	//float4 toonColor;
 	//if (inData.color.w < 0.2) {
 	//	toonColor = 0;
@@ -119,17 +121,26 @@ float4 PS(VS_OUT inData) : SV_Target
 	//}
 
 	if (g_isTextured == 0) {
-		diffuse = lightSource * g_diffuseColor * inData.color;
+		diffuse = lightSource * g_diffuseColor * tI;
 		ambient = lightSource * g_diffuseColor * g_ambientColor;
 	}
 	else {
-		diffuse = lightSource * g_texture.Sample(g_sampler, inData.uv) * inData.color;
+		diffuse = lightSource * g_texture.Sample(g_sampler, inData.uv) * tI;
 		ambient = lightSource * g_texture.Sample(g_sampler, inData.uv) * g_ambientColor;
 	}
 	
-	return toonColor;
+	//輪郭 = 視線ベクトルと面の法線の
+	if (1) {
+		return float4(0, 0, 0, 0);
+	}
+	else {
+		return float4(1, 1, 1, 0);
+	}
+
+	return diffuse + ambient;
+	//return toonColor;
 	//return g_shininess / 20.0f;
-	return diffuse + ambient + specular;
+	//return diffuse + ambient + specular;
 	//return ambient + specular;
 	//return diffuse;
 	//return ambient;
