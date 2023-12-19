@@ -77,6 +77,7 @@ class Fbx
 	//void SetBufferToPipeline();
 
 	XMFLOAT4 lightSourcePosition_ = {0,0,0,0};
+	Texture* pToonTex_;
 public:
 
 	Fbx();
