@@ -28,7 +28,7 @@ cbuffer global:register(b1) {
 // 頂点シェーダー出力＆ピクセルシェーダー入力データ構造体
 //───────────────────────────────────────
 
-struct PS_IN
+struct VS_OUT
 {
 	float4 pos		: SV_POSITION;	//位置
 	float2 uv		: TEXCOORD;		//UV座標
@@ -41,7 +41,7 @@ struct PS_IN
 //───────────────────────────────────────
 // 頂点シェーダ
 //───────────────────────────────────────
-PS_IN VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
+VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
 {
 	//ピクセルシェーダーへ渡す情報
 	VS_OUT outData = (VS_OUT)0;
@@ -69,34 +69,31 @@ PS_IN VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
 //───────────────────────────────────────
 // ピクセルシェーダ
 //───────────────────────────────────────
-float4 PS(PS_IN inData) : SV_Target
+float4 PS(VS_OUT inData) : SV_Target
 {
-
-	float len = length(inData.light); // 光の方向ベクトルを正規化(大きさを 1 にし
-
-	float NL = saturate(dot(inData.normal, inData.light));
-	float k = 1.0f / (1.0 * len * len);
-
-	float3 reflect = normalize(2 * NL * inData.normal - inData.light);
-	float4 specular = pow(saturate(dot(reflect, inData.eyev)), 8);
-
-
-	float4 lightSource = { 1,1,1,1 };//光の色
-	float4 ambientSource = { 1,1,1,1 };//環境光の色
-	float4 ambTerm = 0.5;
+	float4 lightSource = float4(1.0, 1.0, 1.0, 1.0);	//ライト色&明るさ Iin
 
 	float4 diffuse;
 	float4 ambient;
-	if (isTextured.x == false)
+	float4 NL = dot(inData.normal, normalize(g_lightPosition));				//その面の明るさ
+	float4 reflect = normalize(2 * NL * inData.normal - inData.light);
+	float4 specular = pow(saturate(dot(reflect, normalize(inData.eye))), g_shininess) * g_specularColor;
+
+	float len = length(inData.light); // 光の方向ベクトルを正規化
+	float k = 1.0f / (1.0f * len * len);
+
+	float4 ambTerm = 0.5;
+
+	if (g_isTextured == 0)
 	{
-		diffuse = k * NL * lightSource * diffuseColor;
-		ambient = ambTerm * ambientSource * diffuseColor;
+		diffuse = k * NL * lightSource * g_diffuseColor;
+		ambient = ambTerm * g_ambientColor * g_diffuseColor;
 	}
 	else
 	{
 		diffuse = k * NL * lightSource * g_texture.Sample(g_sampler, inData.uv);
-		ambient = ambTerm * ambientSource * g_texture.Sample(g_sampler, inData.uv);
+		ambient = ambTerm * g_ambientColor * g_texture.Sample(g_sampler, inData.uv);
 	}
 
-	return  diffuse + ambient + specular;
+	return diffuse + ambient + specular;
 }
