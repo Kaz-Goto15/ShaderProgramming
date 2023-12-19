@@ -15,7 +15,7 @@ class PlayScene : public GameObject
 	ID3D11Buffer* pCBStageScene_;
 	XMFLOAT4	lightSourcePosition_;
 	void InitConstantBuffer();
-	Arrow* pArrow;
+	//Arrow* pArrow;
 	//Arrow* pArrowX;
 	//Arrow* pArrowY;
 	//Arrow* pArrowZ;

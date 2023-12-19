@@ -145,6 +145,7 @@
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Engine\Camera.cpp" />
     <ClCompile Include="Engine\Direct3D.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="Arrow.h" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Controller.h" />
+    <ClInclude Include="Debug.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Engine\Camera.h" />
     <ClInclude Include="Engine\Direct3D.h" />

@@ -4,6 +4,8 @@
 #include "Engine/Camera.h"
 #include "Controller.h"
 #include "Torus.h"
+#include "Engine/Input.h"
+
 namespace {
 	const XMFLOAT4 DEF_LIGHT_POSITION{ 1, 2, 1, 0 };
 }
@@ -39,20 +41,20 @@ void PlayScene::Initialize()
 {
 	pCtl = (Controller*)Instantiate<Controller>(this);
 	Instantiate<Torus>(this);
-	pArrow = (Arrow*)Instantiate<Arrow>(this);
-	XMFLOAT3 BallPos = pCtl->GetPosition();
-	XMFLOAT3 BallPosNormal;
-	XMStoreFloat3(&BallPosNormal,
-		XMVector3Normalize( XMLoadFloat3(&BallPos) )
-	);
-	XMVECTOR vx = XMVectorSet(1, 0, 0, 0);
-	XMVECTOR ballVecNormal = XMVector3Normalize(XMLoadFloat3(&BallPos));
-	XMVECTOR vxNormal = XMVector3Normalize(XMVectorSet(1, 0, 0, 0));
-	pArrow->SetRotate({
-		acosf(XMVectorGetX(XMVector3Dot(ballVecNormal, vxNormal))),
-		0, 0
-		}
-	);
+	//pArrow = (Arrow*)Instantiate<Arrow>(this);
+	//XMFLOAT3 BallPos = pCtl->GetPosition();
+	//XMFLOAT3 BallPosNormal;
+	//XMStoreFloat3(&BallPosNormal,
+	//	XMVector3Normalize( XMLoadFloat3(&BallPos) )
+	//);
+	//XMVECTOR vx = XMVectorSet(1, 0, 0, 0);
+	//XMVECTOR ballVecNormal = XMVector3Normalize(XMLoadFloat3(&BallPos));
+	//XMVECTOR vxNormal = XMVector3Normalize(XMVectorSet(1, 0, 0, 0));
+	//pArrow->SetRotate({
+	//	acosf(XMVectorGetX(XMVector3Dot(ballVecNormal, vxNormal))),
+	//	0, 0
+	//	}
+	//);
 	//Instantiate<Ground>(this);
 	//Instantiate<Ball>(this);
 	//////Instantiate<Arrow>(this);
@@ -77,16 +79,18 @@ void PlayScene::Update()
 	XMStoreFloat3(&BallPosNormal,
 		XMVector3Normalize(XMLoadFloat3(&BallPos))
 	);
+
+	//pArrow->SetRotate();
 	XMVECTOR ballVecNormal = XMVector3Normalize(XMLoadFloat3(&BallPos));
-	XMVECTOR vxNormal = XMVector3Normalize(XMVectorSet(1, 0, 0, 0));
+	XMVECTOR vxNormal = XMVectorSet(1, 0, 0, 0);
+	//XMVECTOR vxNormal = XMVector3Normalize(XMVectorSet(1, 0, 0, 0));
 	//XMVECTOR vyNormal = XMVector3Normalize(XMVectorSet(0, 1, 0, 0));
 	//XMVECTOR vzNormal = XMVector3Normalize(XMVectorSet(0, 0, 1, 0));
-	pArrow->SetRotate({
-		0,//XMConvertToDegrees(acosf(XMVectorGetX(XMVector3Dot(ballVecNormal, vxNormal)))),
-		0,//XMConvertToDegrees(acosf(XMVectorGetY(XMVector3Dot(ballVecNormal, vxNormal)))),
-		XMConvertToDegrees(acosf(XMVectorGetX(XMVector3Dot(ballVecNormal, vxNormal)))),
-		}
-	);
+
+	//Input::IsKeyUp(DIK_SPACE) {
+	//	Model::ChangeShader();
+	//}
+
 
 	lightPos_ = pCtl->GetPosition();
 	CBUFF_STAGESCENE cb;

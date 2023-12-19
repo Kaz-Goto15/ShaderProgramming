@@ -94,4 +94,5 @@ public:
 	void RayCast(RayCastData& rayData);
 
 	void SetLightSourcePosition(XMFLOAT4 pos) { lightSourcePosition_ = pos; }
+	void	SetRenderingShader(RENDER_STATE _state) { state_ = _state; }
 };

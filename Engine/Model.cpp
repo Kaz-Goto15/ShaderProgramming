@@ -8,7 +8,9 @@ namespace Model {
 		std::string fileName_;
 	};
 	std::vector<ModelData*> modelList_;	//モデルのポインタを入れる
+	RENDER_STATE state_;
 }
+
 int Model::Load(std::string fileName)
 {
 	ModelData* pData = new ModelData;
@@ -82,4 +84,13 @@ void Model::RayCast(int hModel, RayCastData& rayData)
 	XMStoreFloat4(&rayData.dir, vPass - vStart);
 
 	modelList_[hModel]->pFbx_->RayCast(rayData);
+}
+
+void Model::ChangeShader() {
+	int n = (int)(Model::state_);
+	state_ = (RENDER_STATE)(++n % 2);
+	for (auto& theI : modelList_)
+	{
+		theI->pFbx_->SetRenderingShader(Model::state_);
+	}
 }

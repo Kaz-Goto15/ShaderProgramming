@@ -16,5 +16,6 @@ namespace Model
 	void Draw(int hModel);
 	void Release();
 	void RayCast(int hModel, RayCastData& rayData);
+	void ChangeShader();
 };
 
