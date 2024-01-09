@@ -129,16 +129,16 @@ float4 PS(VS_OUT inData) : SV_Target
 		ambient = lightSource * g_texture.Sample(g_sampler, inData.uv) * g_ambientColor;
 	}
 	
-	//輪郭 = 視線ベクトルと面の法線の
-	if (abs(dot(inData.normal, normalize()))) {
-		return float4(0, 0, 0, 0);
-	}
-	else {
-		return float4(1, 1, 1, 0);
-	}
+	////輪郭 = 視線ベクトルと面の法線の
+	//if (abs(dot(inData.normal, normalize()))) {
+	//	return float4(0, 0, 0, 0);
+	//}
+	//else {
+	//	return float4(1, 1, 1, 0);
+	//}
 
-	return diffuse + ambient;
-	//return toonColor;
+	//return diffuse + ambient;
+	return toonColor;
 	//return g_shininess / 20.0f;
 	//return diffuse + ambient + specular;
 	//return ambient + specular;
