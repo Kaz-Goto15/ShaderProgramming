@@ -89,6 +89,7 @@ public:
 	Fbx();
 	HRESULT Load(std::string fileName);
 	void	Draw(Transform& transform);
+	void DrawSetContext(Transform& transform);
 	void	Release();
 
 	void RayCast(RayCastData& rayData);
