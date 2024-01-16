@@ -99,6 +99,15 @@ void Fbx::InitVertex(fbxsdk::FbxMesh* mesh)
 		}
 	}
 
+	for (int i = 0; i < polygonCount_; i++) {
+		int sIndex = mesh->GetPolygonVertexIndex(i);
+		FbxGeometryElementTangent* etangent = mesh->GetElementTangent(i);
+		FbxVector4 tangent = etangent->GetDirectArray().GetAt(sIndex).mData;
+		for (int j = 0; j < 3; j++) {
+			int index = mesh->GetPolygonVertices()[sIndex + j];
+		}
+	}
+
 	//頂点バッファ
 	HRESULT hr;
 	D3D11_BUFFER_DESC bd_vertex;
@@ -234,6 +243,58 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 			assert(hr == S_OK);
 		}
 	}
+
+	for (int i = 0; i < materialCount_; i++)
+	{
+		//マテリアルの色
+		FbxSurfacePhong* pPhong = (FbxSurfacePhong*)pNode->GetMaterial(i);
+
+		//色情報格納
+		FbxDouble3  diffuse = pPhong->Diffuse;
+		FbxDouble3  ambient = pPhong->Ambient;
+
+		pMaterialList_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
+		pMaterialList_[i].ambient = XMFLOAT4((float)ambient[0], (float)ambient[1], (float)ambient[2], 1.0f);
+		pMaterialList_[i].specular = XMFLOAT4(0, 0, 0, 0);	//デフォは黒とする
+		pMaterialList_[i].shininess = 1.0f;
+
+		//Phongの場合
+		if (pPhong->GetClassId().Is(FbxSurfacePhong::ClassId))
+		{
+			//情報を上書き
+			FbxDouble3 specular = pPhong->Specular;
+			pMaterialList_[i].specular = XMFLOAT4((float)specular[0], (float)specular[1], (float)specular[2], 1.0f);
+			pMaterialList_[i].shininess = (float)pPhong->Shininess;
+		}
+
+		//テクスチャ情報
+		FbxProperty  lProperty = pPhong->FindProperty(FbxSurfaceMaterial::sDiffuse);
+
+		//テクスチャの数数
+		int fileTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
+
+		//とりあえずテクスチャなし
+		pMaterialList_[i].pNormalMap = nullptr;
+
+		//テクスチャありの場合
+		if (fileTextureCount)
+		{
+			FbxFileTexture* textureInfo = lProperty.GetSrcObject<FbxFileTexture>(0);
+			string textureFilePath = textureInfo->GetRelativeFileName();
+
+			//ファイル名+拡張だけにする
+			char name[_MAX_FNAME];	//ファイル名
+			char ext[_MAX_EXT];	//拡張子
+			_splitpath_s(textureFilePath.c_str(), nullptr, 0, nullptr, 0, name, _MAX_FNAME, ext, _MAX_EXT);
+			wsprintf(name, "%s%s", name, ext);
+
+			//ファイルからテクスチャ作成
+			pMaterialList_[i].pNormalMap = new Texture;
+			HRESULT hr = pMaterialList_[i].pNormalMap->Load(name);
+			assert(hr == S_OK);
+		}
+	}
+
 }
 
 //描画
@@ -281,6 +342,13 @@ void Fbx::Draw(Transform& transform)
 			ID3D11SamplerState* pSampler = pMaterialList_[i].pTexture->GetSampler();
 			Direct3D::pContext_->PSSetSamplers(0, 1, &pSampler);
 			ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pTexture->GetSRV();
+			Direct3D::pContext_->PSSetShaderResources(0, 1, &pSRV);
+		}
+		if (pMaterialList_[i].pNormalMap)
+		{
+			ID3D11SamplerState* pSampler = pMaterialList_[i].pNormalMap->GetSampler();
+			Direct3D::pContext_->PSSetSamplers(0, 1, &pSampler);
+			ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pNormalMap->GetSRV();
 			Direct3D::pContext_->PSSetShaderResources(0, 1, &pSRV);
 		}
 

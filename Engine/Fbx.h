@@ -37,6 +37,7 @@ class Fbx
 	struct MATERIAL
 	{
 		Texture* pTexture;
+		Texture* pNormalMap;
 		XMFLOAT4 diffuse;
 		XMFLOAT4 ambient;
 		XMFLOAT4 specular;
@@ -53,13 +54,14 @@ class Fbx
 		XMFLOAT4	specularColor;	//スペキュラカラー(ハイライト色)
 		FLOAT		shininess;		//ハイライトの強さ
 		BOOL		isTextured;		// テクスチャ貼ってあるかどうか
-
+		BOOL		isNormalTex;
 	};
 	struct VERTEX
 	{
 		XMVECTOR position;	//位置
 		XMVECTOR uv;		//テクスチャ座標
 		XMVECTOR normal;	//法線ベクトル
+		XMVECTOR tangent;	//接線
 	};
 
 	VERTEX* pVertices_;
