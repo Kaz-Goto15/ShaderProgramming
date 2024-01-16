@@ -101,10 +101,19 @@ void Fbx::InitVertex(fbxsdk::FbxMesh* mesh)
 
 	for (int i = 0; i < polygonCount_; i++) {
 		int sIndex = mesh->GetPolygonVertexIndex(i);
-		FbxGeometryElementTangent* etangent = mesh->GetElementTangent(i);
-		FbxVector4 tangent = etangent->GetDirectArray().GetAt(sIndex).mData;
-		for (int j = 0; j < 3; j++) {
-			int index = mesh->GetPolygonVertices()[sIndex + j];
+		FbxGeometryElementTangent* t = mesh->GetElementTangent(i);
+		if (t != nullptr) {
+			FbxVector4 tangent = t->GetDirectArray().GetAt(sIndex).mData;
+			for (int j = 0; j < 3; j++) {
+				int index = mesh->GetPolygonVertices()[sIndex + j];
+				pVertices_[index].tangent = { (float)tangent[0], (float)tangent[1], (float)tangent[2], 0.0f };
+			}
+		}
+		else {
+			for (int j = 0; j < 3; j++) {
+				int index = mesh->GetPolygonVertices()[sIndex + j];
+				pVertices_[index].tangent = { 0.0f,0.0f,0.0f, 0.0f };
+			}
 		}
 	}
 
@@ -300,7 +309,7 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 //描画
 void Fbx::Draw(Transform& transform)
 {
-	Direct3D::SetShader(SHADER_TOON);
+	//Direct3D::SetShader(SHADER_TOON);
 
 	transform.Calclation();//トランスフォームを計算
 	for (int i = 0; i < materialCount_; i++)
