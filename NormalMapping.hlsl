@@ -3,7 +3,7 @@
 //───────────────────────────────────────
 Texture2D g_texture : register(t0); //テクスチャー
 SamplerState g_sampler : register(s0); //サンプラー
-
+Texture2D   normalTex   :   register(t1);   //ノーマルマップテクスチャ
 
 //───────────────────────────────────────
 // コンスタントバッファ
@@ -19,11 +19,12 @@ cbuffer global : register(b0)
     float4 specularColor;
     float shininess;
     bool isTexture; // テクスチャ貼ってあるかどうか
+    bool    isNormalMap;    //ノーマルマップ有無
 };
 cbuffer global : register(b1)
 {
-    float4 Cam; //カメラ座標
-    float4 light; //光源座標、これをもとに平行光源にする
+    float4 camPos; //カメラ座標
+    float4 lightPos; //光源座標、これをもとに平行光源にする
 }
 
 //───────────────────────────────────────
@@ -33,9 +34,11 @@ struct VS_OUT
 {
     float4 pos : SV_POSITION; //位置
     float2 uv : TEXCOORD; //UV座標
-    float4 color : COLOR; //色（明るさ）
-    float4 campos : TEXCOORD1;
-    float4 normal : TEXCOORD2;
+    float4 eyev : POSITION;
+    float4 nEyev    :   POSITION1;
+    float4 normal   :   POSITION2;
+    float4 light    :   POSITION3;  //ライトを接空間に変換したベクトル
+    float4 color    :   POSITION4;  //通常ランバートモデルの拡散反射の色
 };
 
 //───────────────────────────────────────
@@ -49,7 +52,9 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL, f
     //ローカル座標に、ワールド・ビュー・プロジェクション行列をかけて
     //スクリーン座標に変換し、ピクセルシェーダーへ
     outData.pos = mul(pos, matWVP);
-    outData.uv = uv.xy;
+    outData.uv = (float2)uv;
+
+    float3 binormal = cross(normal, tangent);
 
     //法線を回転
     normal.w = 0;
@@ -57,13 +62,31 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL, f
     normal = normalize(normal);
     outData.normal = normal;
 
+    tangent.w = 0;
+    tangent = mul(tangent, matN);
+    tangent = normalize(tangent);   //接線ベクトルをローカル座標に変換
 
-    float4 light_ = normalize(light);
+    binormal = mul(binormal, matN);
+    binormal = normalize(binormal); //従法線ベクトルをローカル座標に変換
 
-
-    outData.color = saturate(dot(normal, light_)); //ランバートdiffuse用
     float4 posw = mul(pos, matW); //視線ベクトル
-    outData.campos = Cam - posw;
+    outData.eyev = camPos - posw;
+
+    outData.nEyev.x = dot(outData.eyev, tangent);   //接空間視線ベクトル
+    outData.nEyev.y = dot(outData.eyev, binormal);
+    outData.nEyev.z = dot(outData.eyev, normal); 
+    outData.nEyev.w = 0;
+
+    float4 light = normalize(lightPos);
+    light = normalize(light);
+
+    outData.color = mul(light, normal); //ランバートdiffuse用
+
+    outData.light.x = dot(light, tangent);  //接空間光源ベクトル
+    outData.light.y = dot(light, binormal);
+    outData.light.z = dot(light, normal);
+    outData.light.w = 0;
+
     //まとめて出力
     return outData;
 }
@@ -78,22 +101,48 @@ float4 PS(VS_OUT inData) : SV_Target
     float4 ambient = { 0, 0, 0, 0 };
     float4 specular = { 0, 0, 0, 0 };
 
-    float n = shininess;
-    float4 NL = dot(inData.normal, normalize(light));
-    float4 R = normalize(2 * NL * inData.normal - normalize(light));
-    specular = pow(saturate(dot(R, normalize(inData.campos))), n) * specularColor;
+    if (isNormalMap) {
+        inData.light = normalize(inData.light);
+        float4 tmpNormal = normalTex.Sample(g_sampler, inData.uv) * 2 - 1;
+        tmpNormal.w = 0;
+        tmpNormal = normalize(tmpNormal);
 
-    if (isTexture)
-    {
-        diffuse = lightsourse * g_texture.Sample(g_sampler, inData.uv) * inData.color;
-        ambient = lightsourse * g_texture.Sample(g_sampler, inData.uv) * ambientColor;
-    }
-    else
-    {
-        diffuse = lightsourse * diffuseColor * inData.color;
-        ambient = lightsourse * diffuseColor * ambientColor;
-    }
+        float4 s = dot(tmpNormal, normalize(inData.light));
+        s = clamp(s, 0, 1);
 
-    return (diffuse + ambient + specular);
+        float4 r = reflect(-inData.light, tmpNormal);
+        specular = pow(saturate(dot(r, inData.nEyev)), shininess) * specularColor;
+
+        if (isTexture)
+        {
+            diffuse = g_texture.Sample(g_sampler, inData.uv) * s;
+            ambient = g_texture.Sample(g_sampler, inData.uv) * ambientColor;
+        }
+        else
+        {
+            diffuse = diffuseColor * s;
+            ambient = diffuseColor * ambientColor;
+        }
+
+        return diffuse + ambient + specular;
+    }
+    else {
+        float4 NL = saturate(dot(inData.normal, normalize(lightPos)));
+        float4 reflection = reflect(normalize(-lightPos), inData.normal);
+        specular = pow(saturate(dot(reflection, normalize(inData.eyev))), shininess) * specularColor;
+
+        if (isTexture)
+        {
+            diffuse = lightsourse * g_texture.Sample(g_sampler, inData.uv) * inData.color;
+            ambient = lightsourse * g_texture.Sample(g_sampler, inData.uv) * ambientColor;
+        }
+        else
+        {
+            diffuse = lightsourse * diffuseColor * inData.color;
+            ambient = lightsourse * diffuseColor * ambientColor;
+        }
+
+        return (diffuse + ambient + specular);
+    }
 
 }

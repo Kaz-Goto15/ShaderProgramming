@@ -22,7 +22,7 @@ namespace Direct3D
 		ID3D11RasterizerState* pRasterizerState_ = nullptr;	//ラスタライザー
 	};
 	SHADER_BUNDLE shaderBundle[SHADER_MAX];
-	int scrWidth, scrHeight;
+	//int scrWidth, scrHeight;
 }
 
 
@@ -32,8 +32,8 @@ HRESULT Direct3D::Initialize(int winW, int winH, HWND hWnd)
 {
 	HRESULT hr; //エラー処理用
 
-	scrWidth = winW;
-	scrHeight = winH;
+	//scrWidth = winW;
+	//scrHeight = winH;
 
 	///////////////////////////いろいろ準備するための設定///////////////////////////////
 //いろいろな設定項目をまとめた構造体
@@ -134,6 +134,7 @@ HRESULT Direct3D::Initialize(int winW, int winH, HWND hWnd)
 
 	//データを画面に描画するための一通りの設定（パイプライン）
 	pContext_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);  // データの入力種類を指定
+	//pContext_->OMSetRenderTargets(1, &pRenderTargetView_, nullptr);
 	pContext_->OMSetRenderTargets(1, &pRenderTargetView_, pDepthStencilView);            // 描画先を設定
 	pContext_->RSSetViewports(1, &vp);
 
@@ -238,6 +239,8 @@ HRESULT Direct3D::InitShader3D()
 	rdc.CullMode = D3D11_CULL_BACK;
 	rdc.FillMode = D3D11_FILL_SOLID;
 	rdc.FrontCounterClockwise = FALSE;
+	rdc.ScissorEnable = false;
+	rdc.MultisampleEnable = false;
 	hr = pDevice_->CreateRasterizerState(&rdc, &(shaderBundle[SHADER_3D].pRasterizerState_));
 	if (FAILED(hr))
 	{
@@ -376,6 +379,8 @@ HRESULT Direct3D::InitShaderPoint()
 	rdc.CullMode = D3D11_CULL_BACK;
 	rdc.FillMode = D3D11_FILL_SOLID;
 	rdc.FrontCounterClockwise = FALSE;
+	rdc.ScissorEnable = false;
+	rdc.MultisampleEnable = false;
 	hr = pDevice_->CreateRasterizerState(&rdc, &(shaderBundle[SHADER_POINT].pRasterizerState_));
 	if (FAILED(hr))
 	{
@@ -477,7 +482,7 @@ HRESULT Direct3D::InitShaderNormalMap()
 		{ "NORMAL"	,0, DXGI_FORMAT_R32G32B32_FLOAT,0, sizeof(XMVECTOR) * 2 ,D3D11_INPUT_PER_VERTEX_DATA, 0 },//法線
 		{ "TANGENT"	,0, DXGI_FORMAT_R32G32B32_FLOAT,0, sizeof(XMVECTOR) * 3 ,D3D11_INPUT_PER_VERTEX_DATA, 0 },//法線
 	};
-	hr = pDevice_->CreateInputLayout(layout, sizeof(layout)/sizeof(D3D11_INPUT_ELEMENT_DESC), pCompileVS->GetBufferPointer(), pCompileVS->GetBufferSize(), &(shaderBundle[SHADER_NORMALMAP].pVertexLayout_));
+	hr = pDevice_->CreateInputLayout(layout, ARRAYSIZE(layout), pCompileVS->GetBufferPointer(), pCompileVS->GetBufferSize(), &(shaderBundle[SHADER_NORMALMAP].pVertexLayout_));
 	if (FAILED(hr))
 	{
 		MessageBox(nullptr, "頂点インプットレイアウトの作成に失敗しました", "エラー", MB_OK);
@@ -506,13 +511,15 @@ HRESULT Direct3D::InitShaderNormalMap()
 	rdc.CullMode = D3D11_CULL_FRONT;
 	rdc.FillMode = D3D11_FILL_SOLID;
 	rdc.FrontCounterClockwise = FALSE;
+	rdc.ScissorEnable = false;
+	rdc.MultisampleEnable = false;
 	hr = pDevice_->CreateRasterizerState(&rdc, &(shaderBundle[SHADER_NORMALMAP].pRasterizerState_));
 	if (FAILED(hr))
 	{
 		MessageBox(nullptr, "ラスタライザの作成に失敗しました", "エラー", MB_OK);
 		return hr;
 	}
-
+	return S_OK;
 }
 
 
@@ -538,17 +545,12 @@ void Direct3D::BeginDraw()
 	pContext_->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-
-
 //描画終了
-
 void Direct3D::EndDraw()
 {
 	//スワップ（バックバッファを表に表示する）
 	pSwapChain_->Present(0, 0);
 }
-
-
 
 //解放処理
 void Direct3D::Release()

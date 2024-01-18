@@ -64,8 +64,8 @@ class Fbx
 		XMVECTOR tangent;	//接線
 	};
 
-	VERTEX* pVertices_;
-	int** ppIndex_;
+	//VERTEX* pVertices_;
+	//int** ppIndex_;
 
 	int vertexCount_;	//頂点数
 	int polygonCount_;	//ポリゴン数
@@ -79,12 +79,12 @@ class Fbx
 
 	void InitVertex(fbxsdk::FbxMesh* mesh);//頂点バッファ準備
 	void InitIndex(fbxsdk::FbxMesh* mesh);//インデックスバッファ準備
-	void IntConstantBuffer();	//コンスタントバッファ準備
+	void InitConstantBuffer();	//コンスタントバッファ準備
 	void InitMaterial(fbxsdk::FbxNode* pNode);
 	//各バッファをパイプラインにセット
 	//void SetBufferToPipeline();
 
-	XMFLOAT4 lightSourcePosition_ = {0,0,0,0};
+	//XMFLOAT4 lightSourcePosition_ = {0,0,0,0};
 	RENDER_STATE state_;
 public:
 
@@ -95,6 +95,6 @@ public:
 
 	void RayCast(RayCastData& rayData);
 
-	void SetLightSourcePosition(XMFLOAT4 pos) { lightSourcePosition_ = pos; }
+	//void SetLightSourcePosition(XMFLOAT4 pos) { lightSourcePosition_ = pos; }
 	void	SetRenderingShader(RENDER_STATE _state) { state_ = _state; }
 };
