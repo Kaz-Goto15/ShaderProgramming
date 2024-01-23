@@ -86,6 +86,7 @@ class Fbx
 
 	XMFLOAT4 lightSourcePosition_ = {0,0,0,0};
 	RENDER_STATE state_;
+	Texture* pToonTex_;
 public:
 
 	Fbx();
