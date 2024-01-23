@@ -103,6 +103,7 @@
     <FxCompile Include="ShaderPointLight.hlsl" />
     <FxCompile Include="ShaderToon.hlsl" />
     <FxCompile Include="NormalMapping.hlsl" />
+    <FxCompile Include="ShaderToonOutline.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
