@@ -163,8 +163,8 @@ Texture2D   normalTex   :   register(t1);   //ノーマルマップテクスチャ
 cbuffer global : register(b0)
 {
     float4x4 matWVP; // ワールド・ビュー・プロジェクションの合成行列
-    float4x4 matW; //ワールド行列
     float4x4 matN; //法線変換行列
+    float4x4 matW; //ワールド行列
     float4 diffuseColor; // ディフューズカラー（マテリアルの色）
     float4 ambientColor;
     float4 specularColor;
@@ -205,8 +205,9 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL, f
     outData.pos = mul(pos, matWVP);
     outData.uv = (float2)uv;
 
-    float3 binormal = cross(normal, tangent);
-
+    float4 binormal = { cross(normal, tangent), 0 };
+    binormal = mul(binormal, matN);
+    binormal = normalize(binormal); //従法線ベクトルをローカル座標に変換
     //法線を回転
     normal.w = 0;
     normal = mul(normal, matN);
@@ -217,9 +218,6 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL, f
     tangent.w = 0;
     tangent = mul(tangent, matN);
     tangent = normalize(tangent);   //接線ベクトルをローカル座標に変換
-
-    binormal = mul(binormal, matN);
-    binormal = normalize(binormal); //従法線ベクトルをローカル座標に変換
 
     float4 posw = mul(pos, matW); //視線ベクトル
     outData.eyev = normalize(posw - eyePos);
