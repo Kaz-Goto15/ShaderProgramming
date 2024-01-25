@@ -41,6 +41,7 @@ void PlayScene::Initialize()
 {
 	pCtl = (Controller*)Instantiate<Controller>(this);
 	Instantiate<Torus>(this);
+	Instantiate<Ball>(this);
 	//pArrow = (Arrow*)Instantiate<Arrow>(this);
 	//XMFLOAT3 BallPos = pCtl->GetPosition();
 	//XMFLOAT3 BallPosNormal;

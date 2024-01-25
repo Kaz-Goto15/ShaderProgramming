@@ -16,7 +16,7 @@ Ball::~Ball()
 void Ball::Initialize()
 {
     //モデルデータのロード
-    hModel_ = Model::Load("Assets/Ball1.fbx");
+    hModel_ = Model::Load("Assets/ball.fbx");
     assert(hModel_ >= 0);
     //transform_.rotate_.z = 180;
     SetPosition({ 1,1,1 });
