@@ -46,20 +46,20 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
 
 	outData.pos = mul(pos, g_matWVP);	//ローカル座標にWVP行列かけスクリーン座標に変換
 
-	outData.uv = uv;
-
-	float4 light = normalize(g_lightPosition);
-	light = normalize(light);
-	outData.color = saturate(dot(normal, light));
-
-	float4 worldPos = mul(pos, g_matW);				//ローカル座標にワールド行列をかけワールド座標へ
-	outData.eye = normalize(g_eyePos - worldPos);	//視点から頂点情報を引き算、視線を求めピクセルシェーダへ
+	outData.uv = (float2)uv;
 
 	//法線を変形
 	normal.w = 0;							//4次元目は0
 	normal = mul(normal, g_matNormal);	//オブジェクト変形に並び法線も変形
 	normal = normalize(normal);
 	outData.normal = normal;				//ピクセルシェーダへ
+
+	float4 light = normalize(g_lightPosition);
+	light = normalize(light);
+	outData.color = saturate(dot(normal, light));
+
+	float4 worldPos = mul(pos, g_matW);				//ローカル座標にワールド行列をかけワールド座標へ
+	outData.eye = g_eyePos - worldPos;	//視点から頂点情報を引き算、視線を求めピクセルシェーダへ
 
 	//まとめて出力
 	return outData;
@@ -72,13 +72,11 @@ float4 PS(VS_OUT inData) : SV_Target
 {
 
 	float4 lightSource = float4(1.0, 1.0, 1.0, 1.0);	//ライト色&明るさ Iin
-	//float4 ambientSource = float4(0.2, 0.2, 0.2, 1.0);	//アンビエント係数Ka
-
 	float4 diffuse;
 	float4 ambient;
-	float4 NL = dot(inData.normal, normalize(g_lightPosition));				//その面の明るさ
-	float4 reflect = normalize(2 * NL * inData.normal - normalize(g_lightPosition));
-	float4 specular = pow(saturate(dot(reflect, normalize(inData.eye))), g_shininess) * g_specularColor;
+	float4 NL = saturate(dot(inData.normal, normalize(g_lightPosition)));				//その面の明るさ
+	float4 r = reflect(normalize(-g_lightPosition), inData.normal);
+	float4 specular = pow(saturate(dot(r, normalize(inData.eye))), g_shininess) * g_specularColor;
 
 	if (g_isTextured == 0) {
 		diffuse = lightSource * g_diffuseColor * inData.color;

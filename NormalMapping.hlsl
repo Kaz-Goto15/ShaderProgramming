@@ -174,8 +174,8 @@ cbuffer global : register(b0)
 };
 cbuffer global : register(b1)
 {
-    float4 eyePos; //視点位置 = カメラ位置
-    float4 lightPos; //光源座標、これをもとに平行光源にする
+    float4 lightPos; //視点位置 = カメラ位置
+    float4 eyePos; //光源座標、これをもとに平行光源にする
 }
 
 //───────────────────────────────────────
@@ -205,18 +205,15 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL, f
     outData.pos = mul(pos, matWVP);
     outData.uv = (float2)uv;
 
-    float4 binormal = { cross(normal, tangent), 0 };
+    float4 binormal = { cross(tangent, normal), 0 };
     binormal = mul(binormal, matN);
     binormal = normalize(binormal); //従法線ベクトルをローカル座標に変換
     //法線を回転
     normal.w = 0;
-    normal = mul(normal, matN);
-    normal = normalize(normal);
-    normal.w = 0;
-    outData.normal = normal;
+    outData.normal = normalize(mul(normal, matN));
 
-    tangent.w = 0;
     tangent = mul(tangent, matN);
+    tangent.w = 0;
     tangent = normalize(tangent);   //接線ベクトルをローカル座標に変換
 
     float4 posw = mul(pos, matW); //視線ベクトル
@@ -228,10 +225,12 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL, f
     outData.nEyev.w = 0;
 
     float4 light = normalize(lightPos);
+    light.w = 0;
     light = normalize(light);
 
-    outData.color = mul(light, normal); //ランバートdiffuse用
+    outData.color = mul(light, outData.normal); //ランバートdiffuse用
     outData.color.w = 0.0;
+
     outData.light.x = dot(light, tangent);  //接空間光源ベクトル
     outData.light.y = dot(light, binormal);
     outData.light.z = dot(light, normal);
@@ -246,48 +245,46 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL, f
 //───────────────────────────────────────
 float4 PS(VS_OUT inData) : SV_Target
 {
-    float4 lightSourse = float4(1.0, 1.0, 1.0, 0.0);
+    float4 lightSource = float4(1.0, 1.0, 1.0, 0.0);
     float4 diffuse = { 0, 0, 0, 0 };
     float4 ambient = { 0, 0, 0, 0 };
     float4 specular = { 0, 0, 0, 0 };
 
     if (isNormalMap) {
-        inData.light = normalize(inData.light);
         float4 tmpNormal = normalTex.Sample(g_sampler, inData.uv) * 2 - 1;
-        tmpNormal.w = 0;
         tmpNormal = normalize(tmpNormal);
+        tmpNormal.w = 0;
 
-        float4 NL = clamp(dot(tmpNormal, inData.light), 0, 1);
-        float4 r = reflect(-inData.light, tmpNormal);
-        specular = pow(saturate(dot(r, inData.nEyev)), shininess) * specularColor;
+        float4 NL = clamp(dot(normalize(inData.light), tmpNormal), 0, 1);
+        float4 r = reflect(normalize(inData.light), tmpNormal);
+        specular = pow(saturate(dot(r, normalize(inData.nEyev))), shininess) * specularColor;
 
         if (isTexture)
         {
-            diffuse = g_texture.Sample(g_sampler, inData.uv) * NL;
-            ambient = g_texture.Sample(g_sampler, inData.uv) * ambientColor;
+            diffuse = lightSource * g_texture.Sample(g_sampler, inData.uv) * NL;
+            ambient = lightSource * g_texture.Sample(g_sampler, inData.uv) * ambientColor;
         }
         else
         {
-            diffuse = diffuseColor * NL;
-            ambient = diffuseColor * ambientColor;
+            diffuse = lightSource * diffuseColor * NL;
+            ambient = lightSource * diffuseColor * ambientColor;
         }
 
-        //return specular;
         return diffuse + ambient + specular;
     }
     else {
         float4 reflection = reflect(normalize(lightPos), inData.normal);
-        specular = pow(saturate(dot(normalize(reflection), inData.eyev)), shininess) * specularColor;
+        specular = pow(saturate(dot(reflection, inData.eyev)), shininess) * specularColor;
 
         if (isTexture)
         {
-            diffuse = lightSourse * g_texture.Sample(g_sampler, inData.uv) * inData.color;
-            ambient = lightSourse * g_texture.Sample(g_sampler, inData.uv) * ambientColor;
+            diffuse = lightSource * g_texture.Sample(g_sampler, inData.uv) * inData.color;
+            ambient = lightSource * g_texture.Sample(g_sampler, inData.uv) * ambientColor;
         }
         else
         {
-            diffuse = lightSourse * diffuseColor * inData.color;
-            ambient = lightSourse * diffuseColor * ambientColor;
+            diffuse = lightSource * diffuseColor * inData.color;
+            ambient = lightSource * diffuseColor * ambientColor;
         }
 
         //return specular;
