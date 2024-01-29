@@ -209,19 +209,18 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL, f
     binormal = mul(binormal, matN);
     binormal = normalize(binormal); //従法線ベクトルをローカル座標に変換
     //法線を回転
-    normal.w = 0;
     outData.normal = normalize(mul(normal, matN));
+    outData.normal.w = 0;
 
     tangent = mul(tangent, matN);
     tangent.w = 0;
     tangent = normalize(tangent);   //接線ベクトルをローカル座標に変換
 
-    float4 posw = mul(pos, matW); //視線ベクトル
-    outData.eyev = normalize(posw - eyePos);
+    outData.eyev = normalize(mul(pos, matW) - eyePos);  //ワールド座標視線ベクトル
 
     outData.nEyev.x = dot(outData.eyev, tangent);   //接空間視線ベクトル
     outData.nEyev.y = dot(outData.eyev, binormal);
-    outData.nEyev.z = dot(outData.eyev, normal);
+    outData.nEyev.z = dot(outData.eyev, outData.normal);
     outData.nEyev.w = 0;
 
     float4 light = normalize(lightPos);
@@ -233,7 +232,7 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL, f
 
     outData.light.x = dot(light, tangent);  //接空間光源ベクトル
     outData.light.y = dot(light, binormal);
-    outData.light.z = dot(light, normal);
+    outData.light.z = dot(light, outData.normal);
     outData.light.w = 0;
 
     //まとめて出力
