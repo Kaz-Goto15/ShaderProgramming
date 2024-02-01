@@ -84,9 +84,9 @@ class Fbx
 	//各バッファをパイプラインにセット
 	//void SetBufferToPipeline();
 
-	XMFLOAT4 lightSourcePosition_ = {0,0,0,0};
+	//XMFLOAT4 lightSourcePosition_ = {0,0,0,0};
 	RENDER_STATE state_;
-	Texture* pToonTex_;
+	//Texture* pToonTex_;
 public:
 
 	Fbx();
@@ -96,6 +96,6 @@ public:
 
 	void RayCast(RayCastData& rayData);
 
-	void SetLightSourcePosition(XMFLOAT4 pos) { lightSourcePosition_ = pos; }
+	//void SetLightSourcePosition(XMFLOAT4 pos) { lightSourcePosition_ = pos; }
 	void	SetRenderingShader(RENDER_STATE _state) { state_ = _state; }
 };

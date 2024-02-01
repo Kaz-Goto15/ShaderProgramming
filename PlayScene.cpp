@@ -5,6 +5,7 @@
 #include "Controller.h"
 #include "Torus.h"
 #include "Engine/Input.h"
+#include "Water.h"
 
 namespace {
 	const XMFLOAT4 DEF_LIGHT_POSITION{ 1, 2, 1, 0 };
@@ -42,6 +43,7 @@ void PlayScene::Initialize()
 	pCtl = (Controller*)Instantiate<Controller>(this);
 	//Instantiate<Torus>(this);
 	Instantiate<Ball>(this);
+	Instantiate<Water>(this);
 	//pArrow = (Arrow*)Instantiate<Arrow>(this);
 	//XMFLOAT3 BallPos = pCtl->GetPosition();
 	//XMFLOAT3 BallPosNormal;

@@ -48,7 +48,6 @@ HRESULT Fbx::Load(std::string fileName)
 	//引数のfileNameからディレクトリ部分を取得
 	char dir[MAX_PATH];
 	_splitpath_s(fileName.c_str(), nullptr, 0, dir, MAX_PATH, nullptr, 0, nullptr, 0);
-	//wsprintf(dir, "%s", dir);
 
 	//カレントディレクトリ変更
 	SetCurrentDirectory(dir);
@@ -64,8 +63,8 @@ HRESULT Fbx::Load(std::string fileName)
 	//マネージャ解放
 	pFbxManager->Destroy();
 
-	pToonTex_ = new Texture;
-	pToonTex_->Load("Assets\\toon.png");
+	//pToonTex_ = new Texture;
+	//pToonTex_->Load("Assets\\toon.png");
 	return S_OK;
 }
 
@@ -73,7 +72,6 @@ HRESULT Fbx::Load(std::string fileName)
 void Fbx::InitVertex(fbxsdk::FbxMesh* mesh)
 {
 	//頂点情報を入れる配列
-	//VERTEX* pVertices_ = new VERTEX[vertexCount_];
 	pVertices_ = new VERTEX[vertexCount_];
 	//全ポリゴン
 	for (DWORD poly = 0; poly < polygonCount_; poly++)
@@ -352,8 +350,8 @@ void Fbx::Draw(Transform& transform)
 				Direct3D::pContext_->PSSetShaderResources(1, 1, &pSRV);
 			}
 
-			ID3D11ShaderResourceView* pSRVToon = pToonTex_->GetSRV();
-			Direct3D::pContext_->PSSetShaderResources(1, 1, &pSRVToon);
+			//ID3D11ShaderResourceView* pSRVToon = pToonTex_->GetSRV();
+			//Direct3D::pContext_->PSSetShaderResources(1, 1, &pSRVToon);
 
 			//描画
 			Direct3D::pContext_->DrawIndexed(indexCount_[i], 0, 0);
