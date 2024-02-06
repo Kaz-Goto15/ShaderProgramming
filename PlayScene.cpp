@@ -1,11 +1,9 @@
 #include "PlayScene.h"
-#include "Ground.h"
-#include "Ball.h"
 #include "Engine/Camera.h"
 #include "Controller.h"
-#include "Torus.h"
 #include "Engine/Input.h"
-#include "Water.h"
+#include "SingleObject.h"
+
 
 namespace {
 	const XMFLOAT4 DEF_LIGHT_POSITION{ 1, 2, 1, 0 };
@@ -41,9 +39,30 @@ PlayScene::PlayScene(GameObject* parent)
 void PlayScene::Initialize()
 {
 	pCtl = (Controller*)Instantiate<Controller>(this);
-	//Instantiate<Torus>(this);
-	Instantiate<Water>(this);
-	//pArrow = (Arrow*)Instantiate<Arrow>(this);
+
+	pSO = (SingleObject*)Instantiate<SingleObject>(this);
+	pSO->AddModel("Water.fbx");
+	//pSO->AddModel("Torus.fbx");
+	//pSO->AddModel("Ground.fbx");
+	int ball = pSO->AddModel("ball.fbx");
+	Transform ballTra;
+	ballTra.position_ = { 1,1,1 };
+	pSO->SetModelTransform(ball, ballTra);
+
+	//Transform arrowTra;
+	//arrowTra.scale_ = { 0.25f, 0.25f, 0.25f };
+	//int arrowX = pSO->AddModel("Arrow.fbx");
+	//pSO->SetModelTransform(arrowX, arrowTra);
+	//arrowTra.rotate_ = { 0,0,90 };
+	//int arrowY = pSO->AddModel("Arrow.fbx");
+	//pSO->SetModelTransform(arrowY, arrowTra);
+	//arrowTra.rotate_ = { 0,-90,0 };
+	//int arrowZ = pSO->AddModel("Arrow.fbx");
+	//pSO->SetModelTransform(arrowZ, arrowTra);
+
+
+
+
 	//XMFLOAT3 BallPos = pCtl->GetPosition();
 	//XMFLOAT3 BallPosNormal;
 	//XMStoreFloat3(&BallPosNormal,
@@ -57,14 +76,6 @@ void PlayScene::Initialize()
 	//	0, 0
 	//	}
 	//);
-	//Instantiate<Ground>(this);
-	//Instantiate<Ball>(this);
-	//////Instantiate<Arrow>(this);
-	//pArrowX = (Arrow*)Instantiate<Arrow>(this);
-	//pArrowY = (Arrow*)Instantiate<Arrow>(this);
-	//pArrowZ = (Arrow*)Instantiate<Arrow>(this);
-	//pArrowY->SetRotate({ 0,0,90 });
-	//pArrowZ->SetRotate({ 0,-90,0 });
 	//Camera::SetPosition(XMVECTOR{ 3,6,-3,0});
 	//Camera::SetTarget({ 0, 10, 0, 0 });
 

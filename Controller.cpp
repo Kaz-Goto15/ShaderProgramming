@@ -1,7 +1,7 @@
 #include "Controller.h"
 #include "Engine/Camera.h"
 #include "Engine/Input.h"
-#include "Ball.h"
+#include "SingleObject.h"
 
 //コンストラクタ
 Controller::Controller(GameObject* parent) :
@@ -18,7 +18,7 @@ Controller::Controller(GameObject* parent) :
 	camDistReg(0.05f),
 	modifyMode(MD_DEFAULT),
 	lock(false),
-	pBall(nullptr)
+	pSO(nullptr)
 {
 	transform_.rotate_.x = 45.5;
 }
@@ -38,8 +38,10 @@ void Controller::Initialize()
 	movcode[MV_UP] = DIK_Q;
 	movcode[MV_DOWN] = DIK_E;
 
-	pBall = (Ball*)Instantiate<Ball>(this);
-	pBall->SetScale({ 0.25f,0.25f,0.25f });
+	pSO = (SingleObject*)Instantiate<SingleObject>(this);
+	hBall_ = pSO->AddModel("ball.fbx");
+	ballTra_.scale_ = { 0.25f, 0.25f, 0.25f };
+	pSO->SetModelTransform(hBall_, ballTra_);
 }
 
 //更新
@@ -129,7 +131,8 @@ void Controller::Update()
 //描画
 void Controller::Draw()
 {
-	pBall->SetPosition(transform_.position_);
+	ballTra_.position_ = transform_.position_;
+	pSO->SetModelTransform(hBall_, ballTra_);
 }
 
 //開放

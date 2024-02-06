@@ -55,6 +55,7 @@ class Fbx
 		FLOAT		shininess;		//ハイライトの強さ
 		BOOL		isTextured;		// テクスチャ貼ってあるかどうか
 		BOOL		isNormalTex;
+		FLOAT		scroll;
 	};
 	struct VERTEX
 	{
@@ -98,4 +99,5 @@ public:
 
 	void SetLightSourcePosition(XMFLOAT4 pos) { lightSourcePosition_ = pos; }
 	void	SetRenderingShader(RENDER_STATE _state) { state_ = _state; }
+	float scrollValue;
 };

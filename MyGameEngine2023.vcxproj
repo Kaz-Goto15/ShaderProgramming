@@ -142,11 +142,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Arrow.cpp" />
-    <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Engine\Camera.cpp" />
     <ClCompile Include="Engine\Direct3D.cpp" />
     <ClCompile Include="Engine\Fbx.cpp" />
@@ -160,14 +157,10 @@
     <ClCompile Include="Engine\Sprite.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
-    <ClCompile Include="Ground.cpp" />
-    <ClCompile Include="Item.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="SingleObject.cpp" />
     <ClCompile Include="TestScene.cpp" />
-    <ClCompile Include="Torus.cpp" />
-    <ClCompile Include="Water.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="NormalMapping.hlsl">
@@ -235,11 +228,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Arrow.h" />
-    <ClInclude Include="Ball.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="Debug.h" />
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Engine\Camera.h" />
     <ClInclude Include="Engine\Direct3D.h" />
     <ClInclude Include="Engine\Fbx.h" />
@@ -253,13 +243,9 @@
     <ClInclude Include="Engine\Sprite.h" />
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
-    <ClInclude Include="Ground.h" />
-    <ClInclude Include="Item.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="PlayScene.h" />
+    <ClInclude Include="SingleObject.h" />
     <ClInclude Include="TestScene.h" />
-    <ClInclude Include="Torus.h" />
-    <ClInclude Include="Water.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

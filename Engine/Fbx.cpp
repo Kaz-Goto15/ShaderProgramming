@@ -12,7 +12,8 @@ Fbx::Fbx() :
 	pIndexBuffer_(nullptr),
 	pConstantBuffer_(nullptr),
 	pMaterialList_(nullptr),
-	state_(RENDER_DIRLIGHT)
+	state_(RENDER_DIRLIGHT),
+	scrollValue(0)
 {
 }
 
@@ -292,6 +293,8 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 //描画
 void Fbx::Draw(Transform& transform)
 {
+
+	scrollValue += 0.001f;
 	if (state_ == RENDER_DIRLIGHT) {
 		Direct3D::SetShader(SHADER_NORMALMAP);
 	}
@@ -314,6 +317,7 @@ void Fbx::Draw(Transform& transform)
 			cb.shininess = pMaterialList_[i].shininess;
 			cb.isTextured = pMaterialList_[i].pTexture != nullptr;
 			cb.isNormalTex = pMaterialList_[i].pNormalMap != nullptr;
+			cb.scroll = scrollValue;
 
 			D3D11_MAPPED_SUBRESOURCE pdata;
 			Direct3D::pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める

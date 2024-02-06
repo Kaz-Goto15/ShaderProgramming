@@ -1,9 +1,9 @@
 #pragma once
 #include "Engine/GameObject.h"
-#include "Arrow.h"
 
-class Ball;
 class Controller;
+class SingleObject;
+
 struct CBUFF_STAGESCENE
 {
 	XMFLOAT4	lightPosition;
@@ -15,12 +15,8 @@ class PlayScene : public GameObject
 	ID3D11Buffer* pCBStageScene_;
 	XMFLOAT4	lightSourcePosition_;
 	void InitConstantBuffer();
-	//Arrow* pArrow;
-	//Arrow* pArrowX;
-	//Arrow* pArrowY;
-	//Arrow* pArrowZ;
-	Ball* pBall;
 	Controller* pCtl;
+	SingleObject* pSO;
 	XMFLOAT3 lightPos_;
 	//Quad* q;
 public:

@@ -70,6 +70,13 @@ void GameObject::SetTransform(Transform _tra)
 	transform_.scale_ = _tra.scale_;
 }
 
+void GameObject::SetScale(float _sca)
+{
+	transform_.scale_.x = _sca;
+	transform_.scale_.y = _sca;
+	transform_.scale_.z = _sca;
+}
+
 GameObject* GameObject::GetRootJob()
 {
 	if (pParent_ == nullptr)return this;

@@ -11,6 +11,9 @@ SamplerState	g_sampler : register(s0);	//サンプラー
 cbuffer global
 {
 	float4x4	matW;			// ワールド行列
+	float4x4	matTexture;			// ワールド行列
+	float4	vecColor;			// ワールド行列
+	float	scroll;			// ワールド行列
 };
 
 //───────────────────────────────────────

@@ -39,6 +39,7 @@ public:
 	void SetPosition(XMFLOAT3 _pos) { transform_.position_ = _pos; }
 	void SetRotate(XMFLOAT3 _rot) { transform_.rotate_ = _rot; }
 	void SetScale(XMFLOAT3 _sca) { transform_.scale_ = _sca; }
+	void SetScale(float _sca);
 
 	GameObject* GetRootJob();
 	GameObject* FindChildObject(std::string _objName);
