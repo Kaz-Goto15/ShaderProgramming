@@ -8,7 +8,7 @@ SamplerState	g_sampler : register(s0);	//サンプラー
 // コンスタントバッファ
 // DirectX 側から送信されてくる、ポリゴン頂点以外の諸情報の定義
 //───────────────────────────────────────
-cbuffer global:register(b0)
+cbuffer global : register(b0)
 {
 	float4x4	g_matWVP;			// ワールド・ビュー・プロジェクションの合成行列
 	float4x4	g_matNormal;        //法線行列
@@ -20,10 +20,11 @@ cbuffer global:register(b0)
 	bool		g_isTextured;		// テクスチャ貼ってあるかどうか
 
 };
-cbuffer global:register(b1) {
-	float4		g_lightPosition;	//ライト位置
+cbuffer global : register(b1) {
+	float4		g_lightPos;			//ライト位置
 	float4		g_eyePos;			//カメラ位置
 }
+
 //───────────────────────────────────────
 // 頂点シェーダー出力＆ピクセルシェーダー入力データ構造体
 //───────────────────────────────────────
@@ -59,7 +60,7 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
 	normal = normalize(normal);
 	outData.normal = normal;				//ピクセルシェーダへ
 
-	outData.light = normalize(g_lightPosition - worldPos);
+	outData.light = normalize(g_lightPos - worldPos);
 
 	//まとめて出力
 	return outData;
@@ -75,7 +76,7 @@ float4 PS(VS_OUT inData) : SV_Target
 
 	float4 diffuse;
 	float4 ambient;
-	float4 NL = dot(inData.normal, normalize(g_lightPosition));				//その面の明るさ
+	float4 NL = dot(inData.normal, normalize(g_lightPos));				//その面の明るさ
 	float4 reflect = normalize(2 * NL * inData.normal - inData.light);
 	float4 specular = pow(saturate(dot(reflect, normalize(inData.eye))), g_shininess) * g_specularColor;
 

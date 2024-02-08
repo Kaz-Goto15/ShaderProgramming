@@ -21,5 +21,6 @@ public:
     void Release() override;
     int AddModel(string fileName);
     void SetModelTransform(int modelNo, Transform tra);
-    bool EnableRotateY() { isRotateY = true; }
+    void EnableRotateY() { isRotateY = true; }
+    void InvertZ() { transform_.rotate_.z += -180; }
 };
